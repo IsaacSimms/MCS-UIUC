@@ -39,5 +39,3 @@ Per reviews of programming assignments and forum based interactions, as well as 
 ## See syllabus for things like grading, deadlines, schedules etc
 ## things like office hours, communication resources for various needs, etc. are all in that beginning section of week 1
 5% extra credit for helping other people
-
-
