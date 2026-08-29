@@ -49,3 +49,28 @@ Algo A is O(foo) performant
 this is saying that the algo takes < c * foo time to complete, where some constant is c. Beyond some input size of N.
 Usually foo is a function of input size (N)
 Common to see performances like O(N), O(N^2) O(log N)
+
+## Basic Probability
+### Terms
+Set    = a collection of things
+Subset = a collection of things that is part of a larger set
+### Basic
+Any event has some probability of happening.
+"which hour of the day you woke up in example"
+E1 is an event - E2 is an Event. E1 and E2 are ***independent*** of each other. For the probability of both E1 and E2 being true is E1 * E2
+For Prob of E1 OR E2 = E1 + E2 - (E1 * E2)
+
+## DNS
+Domain Name System
+Physically, it is a collection of servers throughout the world, owned by different organizations.
+Input = Domain name (code-smith.cc)
+Output = Current IP address of the actual web server. 
+Ip address = unqiue ID string for identifying compute
+
+## Graphs
+In computer science, is reperesenting some fort of network. (connected cities example. Multiple cities and how long each flight takes)
+Nodes (also known as vertex) = the cities
+Edge                         = the flight connection
+Edge weight                  = the amount of time it takes to do each flight respectively
+When "A" is connected to "B" those two nodes have an edge connecting them.
+Most edges are only conencting two nodes.
