@@ -52,7 +52,7 @@ Term Frequency     = How many times does "presidential" occur in d? c("president
 Document Length    = How long is d? |d| in general, if a term occurs many times in a document that is much longer it is NOT as significant as that same term occuring just as many times in a document that is much smaller.
 Document Frequency = How often do we see "presidential" in the entire collection? df("presidential) P("presidential"|collection)
 
-All of these are determining the popularity of a term in the collection. Accross all of them, matching a rare term from query to doc contriutes more to relevance factor then matching a common term.
+All of these are determining the popularity of a term in the collection. Accross all of them, matching a rare term from query to doc zs more to relevance factor then matching a common term.
 
 ## Commonly used models and which is best (considered state of the art)
 Note: when truly optimized all of the below models tend to perform equally well
