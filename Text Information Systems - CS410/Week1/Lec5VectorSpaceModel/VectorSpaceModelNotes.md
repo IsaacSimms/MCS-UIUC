@@ -44,5 +44,5 @@ What the term weights actually are (and by extension, where to place a doc or qu
 Note:
     term weight in query indicates how important that term is but in the doc, term weight indicates how well characterized that doc is.
 **Similarity measure** is the description of what "near" means in the scoring of docs relevance. How do we compute what doc is closest to the query in vector space programmatically? That is the similarity measure.
-***Basically, the VSM is the skelton and many of the definitions within that skeleton need to be dialed in by the engineer for that specific use case.
+*Basically, the VSM is the skelton and many of the definitions within that skeleton need to be dialed in by the engineer for that specific use case.*
 

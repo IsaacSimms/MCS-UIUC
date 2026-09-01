@@ -10,7 +10,7 @@ This lecture discusses different types of document ranking function.
 The queries (q) is a collection of words
 The documents (d) is also a collection of words
 The ranking function (f), if built well, should be taking q and d as arguments (f(q,d)) and return all ranked relevant docs on top of non-relevant ones.
-**key**             = the function needs to measure the ***likelihood*** that the d is relevant to the q
+**key**             = the function needs to measure the *likelihood* that the d is relevant to the q
 **Retrieval model** = used to do the key. The model formalizes relevance by giving that metric a computational definition.
 
 ## Different type of retrieval models
