@@ -19,7 +19,6 @@ processes a set of all the records in batches
 Processes each indivial record (a play from shakespeare, or a chapter of a play, just some sort of division of the whole)
 with the goal of **generating "intermediate" key/value pairs**
 
-![alt text](image-1.png)
-
+**look at MapTaskDivision.png**
 Essentially, the "welcome" key is assigned the value of one because it was in countered once. (the second everyone is independent of the first one)
 Note: Map is easy to parallelize because you can simply split (shard) the record set into two different tasks.
