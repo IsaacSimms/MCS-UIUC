@@ -1,5 +1,7 @@
+# THE TF-IDF MODEL
 # How to improve the instantiation (a specific instance or example) of the Vector Space Model (VSM)
 # i.e. VSM continued
+
 
 ### Remember:
 Example:
@@ -44,4 +46,14 @@ Sim(q,d) = q.d = x_1 y_1 + ... + x_N y_N = summation ^ N _i=1 x_i y_i
 Fixes the problem with "stock" (common) words having weight in the similarity calculation that they should not have.
     (having teh word "the" in both the query and doc does not give you insight into if the doc and query are similar)
 
-These stock words are common everywhere. Use global statistics of terms (the whole collection) to downweight stock terms and increase weight on uncommon words.
+These stock words are common everywhere. Use global statistics of documents (in the whole collection)
+    If almost all docs have the same term, that term is considered stock.
+    If a small percentage of documents contain any one term, that term is considered rare.
+
+Terms that are rare, meaning they do not appear in the collection very often, are rewarded with a high IDF score. They get more weight.
+Terms that are stock words, which occur in almost every document, do not get a high IDF score and are downweighted. (examples include "the" or "of")
+
+**IDF(W) = log((M+1)/df(w)**
+    M = total number of documents in the collection
+    df(w) = document frequency (total number of documents containing that specific term)
+
