@@ -42,7 +42,7 @@ A note as it relates to accumulators:
 - If a document contains just the word information or just the word security, it gets pulled into the ranking function and allocated an accumulator
 - If the document contains both the words information and security, it still gets pulled into the ranking function and allocated a single accumulator
 - Accumulators are going to get initialized to zero and filled with the weighted scoring of the terms relationship to the document.
-    (if you are ranking based on raw TF sum, the accumulator is going to hold that raw count of how many times each term occured in each doc)
+    (if you are ranking based on raw TF sum, the accumulator is going to hold that raw count of how many times each term occurred in each doc)
 
 ## General efficiency improvements when doing ranking function BM25
 Caching data (query results/recent queries, list of inverted index)
