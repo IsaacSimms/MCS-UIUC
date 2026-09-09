@@ -1,0 +1,319 @@
+Isaac Simms - UIUC MCS
+CS425 - Distributed Systems
+Homework 1
+
+Question 1:
+
+
+a. O( ) average dissemination time for a gossip with one sender from any
+subtree (note the root is not the sender), as a function of N.
+
+Architecture:
+{subnet A, N/2 nodes} ------ root ----- {subnet b, N/2 nodes}
+Phase 1: Fill A
+Assumption: A node in subnet A is the first to become infected with the rumor.
+Each round, each infected node tells another node in subnet A. To reach N/2:
+log_2(N/2) = O(log N)
+Phase 2: Root is infected
+There is one push to the root node (most likely to happen once A is mostly is informed.
+There is no scaling factor with N here since there is always a single root node: 
+O(1) 
+Phase 4: Node in subnet B becomes infected
+Root node has a 50% chance of infecting a node in subnet B. Big-O complexity is O(1)
+Phase 3: Fill B
+This is the same logic as the fill A phase, with a big-O complexity of O(log N)
+Phase 4: Add the phases: O(log N) + O(1) + O(1) + O(1) + O(log N) →
+drop what isn’t costing the complexity for the answer t the question:
+O(log N)
+
+b. Maximum (across all nodes) of the average load on the node.
+
+Maximum average load is O(1) 
+Intake by root: N * (2/N) = 2
+Intake by leaf: 1  (2/N) + 1/N from the root. Approx. = 1
+So the most worked node is the root 2, and that equates to a big-O complexity of O(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Question 2:
+
+a. What is the key difference between AWS Lambda and AWS EC2?
+AWS EC2 is Amazon’s scalable, on-demand VM (Virtual Machine) solution. AWS maintains the  hardware but the OS, disks, processes, etc. are all your responsibility.
+AWS Lambda is AWS’s function execution solution. You bring a function that you want executed and a definition of the trigger. AWS takes care of the rest
+
+b. What are the two key differences between AWS Lambda and AWS spot
+instances (think: pricing and how long instances last)?
+AWS Spot is Amazon offering discounted VMs for leftover capacity. Billing is like EC2, you pay for the VM including when idle. No time bound cap.
+AWS Lambda persists for the duration of one execution with a time bound cap. You are billed per invocation plus seconds of runtime.
+
+c. What is the key difference between a “regular” AWS instance (EC2) and a
+“burstable” AWS instance?
+“Regular” AWS EC2 instance: you are reserving a full CPU at the full rate, indefinitely.
+In a burstable AWS instance, you reserve a small portion of a CPU. If you run under that you accumulate credits, if you run the CPU over that you burn credits or billed.
+
+d. What is the difference between a GPU and a TPU (among cloud
+offerings)?
+GPUs and TPUs are both chips that you can attach to a VM in cloud environments. GPUs are general-purpose parallel processors optimized for a variety of tasks. TPUs are built specifically for AI workloads, specifically tensor math/matrix multiplication. TPUs are optimized for high-throughput deep learning.
+
+e. What is the difference between AWS spot instances and Google Cloud
+preemptible instances?
+Both architectures are the public cloud providers selling leftover VM capacity at a discount.
+AWS spot has no time bound cap. AWS will take the capacity back from you at any time. GCP preemptible has a 24-hour hard cap where Google will take that capacity back no matter what.
+
+f. Give one example application (class) where you would prefer AWS EC2,
+and one where you would prefer AWS Lambda. Justify your choices
+briefly.
+AWS EC2 preferred when you are needing an application API that is always accessible. This is because EC2 VMs are long running and are load ready, and allow for granular control of things like the OS and in-memory processes. AWS Lambda is preferred when you need to do something like a simple parse of a JSON or ping a webhook. Lambda specialize in often zero functions that are short and bursty.
+
+
+
+
+
+
+
+
+Question 3:
+
+a. Define each of these 6 terms concisely
+
+Container: A stand-alone and encapsulated process or application that is isolated from the other processes on the host.
+Docker: Docker is a virtualization platform that operates at the OS-level and allows different containers to operate on the same kernel.
+Virtual Machine: A computer emulation including the Operating System, CPU/RAM/Disk/GPU, kernel, etc. but with hypervisor in play for isolation from the host machine.
+Kubernetes: An open source container orchestrator which is used to schedule, restart, and manage containers across multiple machines.
+K8 pod: The smallest unit that K8 manages, one or more containers with shared namespace and orchestration.
+K8 Cluster: A whole K8 control plane with different types of servers, multiple pods, and worker nodes.
+
+b. Among the four possibilities of docker, container, VM, and K8s, give one
+scenario where the fencing team would use each of them over the other
+three possibilities. Think of applications. (Keep your answer to < 100
+words).
+
+VM: If the fencing team is running an application which requires a full OS and kernel, such as a vendor analysis program, a VM is likely the right tool.
+Container: The fencing team should reach for a container when they need a locked down and isolated process such as a long running python process from an opponent team.
+Docker: Docker is vital when you need to maange a repeatable container image, such as when the coach has a docherfile + app to run simulated game instances.
+K8s: Let’s say the team is doing a multi day tournament where they need a separate but centrally managed containers for running game simulations, they would need K8s.
+
+c. Give two key differences between a K8s node, K8s pod, and K8s cluster.
+A K8s node, pod, and cluster are all describing different scopes/sizes of the system. A node is a single machine (VM or physical server), a Pod is a collection of containers, which is where the scheduling/management takes place, and a Cluster is the entire K8 system. A Cluster contains many nodes, and a node runs many pods. When a pod fails K8s spins up a new one, when a node fails all pods on that node fail, when a cluster goes down it all goes down.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Question 4:
+Total time = map task compute time + shuffle + reduce task compute time
+
+Given:
+Map input fetch = 20s
+Reduce task execution time = 35s
+20 machines 5 containers each
+Map output data = 25mb
+Network Bandwidth = 2.5 Gbps
+300 map tasks
+200 reduce tasks
+
+Determine how many parallel processes are possible:
+20 machines * 5 containers each = 100 available processes
+
+Map compute time:
+300 processes / 100 available slots = three waves of compute. 3 * 20s = 60s
+
+byte transfer:
+300 map tasks * 25mb each = 7,500mb produced
+Convert to bits instead of bytes: 7,500 * 8 = 60,000 megabits = 60 gigabits
+60 gb / 2.5 gbps = 24s of processing time.
+
+Reduce compute time:
+200 processes / 100 available slots = 2 ways of compute. 2 * 35s = 70s
+
+answer:
+70 + 24 + 60 = 154s of total processing time
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Question 6:
+To train new sportspersons, US sports agencies have been wondering whether it
+is faster to “push” gossip about new coaching opportunities or to have the young
+sportspersons “pull” gossip about them. Someone argues, “Push gossip is slow.
+It is better to do pull gossip, and even with fixed fanout, it converges in
+O(log(log(N)) time!” Are they right? If yes, give a proof (informal proof ok). If
+they are wrong, give a proof (informal proof). (Note: Push gossip and pull gossip
+mentioned here are the same protocols discussed in lecture)
+
+The argument is technically wrong because it is missing a key complexity when it comes to the time required to push/pull in gossip.
+
+In push, only nodes who know the rumor attempt to distribute it. This achieves a doubling O(log N) in the first half (N / 2) of the distribution since a majority of nodes are going to push to nodes that are not infected. However, in the second half of the distribution the distribution most nodes are going to push to nodes that are already infected, so there is no acceleration effect, and big O is still O(log N) in that second half.
+
+In pull, all uninfected nodes ask for the rumor, so that doubling effect of O(log N) is going to occur in the first half of the distribution (N /2) since all infected nodes are likely to get hit with an uninfected node asking for the rumor each heartbeat. There is not an acceleration effect in the first half of the distribution because some uninfected nodes will ping nodes that are also uninfected. But, in the second half of the distribution, all uninfected nodes are very likely to ping a node that is already infected, and this leads to a distribution acceleration effect of O(log(log(N))
+
+Therefore, pull gossip is the better option for this fixed fanout gossip distribution. But, the first half of the distribution (N / 2) is going to have a time complexity of O(log N) and it is only until after half of the nodes have been infected that O(log(log(N)) is achieved.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Question 7:
+
+a. They use Gossip-style failure detection, but they set T_cleanup = 0
+ T_cleanup decides how long after a node is dead (failing heartbeat) that it gets removed. If T_cleanup is equal to 0 then removal latency is low since there is no extra wait but this creates ghosts, where nodes gossip the old heartbeat since they haven’t heard about the failure.
+
+b. They use SWIM-style failure detection, but they removed the Suspicion
+feature.
+SWIM: heartbeat distribution is Alive → Suspect → dead dissemination pattern. Removing Suspicion then the failure detection will just be failed ping = dead. Cut down on detection times since only one heartbeat period is required to determine dead. Lead to false positives since nodes cannot refute their failed ping.
+
+c. They use SWIM-style failure detection, but they removed the round-robin
+pinging + random permutation, and instead just randomly selected each
+ping target.
+Advantage here is a simpler workflow with less moving parts and failure points in the actual detection method, less overhead. Latency is vanilla SWIM. Disadvantage is that a failure could be missed for an undefined number of heartbeat periods, leading to no guaranteed accuracy.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Question 9:
+The three jobs required:
+
+Job 1: 
+D1   →	Join datasets on the post ID (p) as the “key”…
+D2   →	this gives you one dataset that has which user posted each post, and how many likes 			each post has.
+
+Job 2:
+(new dataset)	→ Join datasets on user id and sum of total likes. 
+D3		→This data set will now have correlation between the data we care about and an 				     understanding of which users are actually US tennis players
+
+Job 3:
+one reducer job that takes top k → K user ids
+
+Pseudocode:
+//// == Job 1                                          	            == ////
+//// == Input = D1 and D2                            	             == ////
+//// == Output = author of post and likes on that post == ////
+
+Map1a(_, (a, p, ts)):           // only give Map1a D1 to read
+    output(p, (Author, a))
+
+Map1b(_, (a, p, ts)):           // only give Map1b D2 to read
+    output(p, LIKE)
+
+Reduce1(p, V):
+    Author = null
+    likes  = 0
+    foreach item in V:
+        if item is (Author, a):
+            Author = a
+        else if item is LIKE:
+            likes += 1
+    if Author != null:
+        output(Author, likes)
+
+//// == Job 2                                   == ////
+//// == Input = P1 (u, likes), D3     == ////
+//// == Output = P2 (u, total likes) == ////
+
+Map2a(u, likes):               // only give Map2a P1 to read
+    output(u, (LIKES, likes))
+
+Map2b(_, u):                   // only give Map2b D3 to read
+    output(u, PLAYER)
+
+Reduce2(u,V):
+    is_player      = false
+    totalLikes     = 0
+    foreach item in V:
+        if item is PLAYER:
+            is_player = true
+        elseif item is (LIKES, likes):
+            totalLikes += likes
+    if is_player:
+        output(u, totalLikes)
+
+//// == Job 3                 	 == ////
+//// == Input = P2 (u, score)    == ////
+//// == Output = K as userIDs == ////
+
+
+Map3(u, score):                   // only give Map3 P2 to read
+    output(1, (u,score))
+
+Reduce3(1,V):
+    top = get top K from V by score
+    foreach (u,score) in top:
+        output(u,_)

@@ -1,0 +1,54 @@
+//// == Job 1                                          == ////
+//// == Input = D1 and D2                              == ////
+//// == Output = author of post and likes on that post == ////
+
+Map1a(_, (a, p, ts)):           // only give Map1a D1 to read
+    output(p, (Author, a))
+
+Map1b(_, (a, p, ts)):           // only give Map1b D2 to read
+    output(p, LIKE)
+
+Reduce1(p, V):
+    Author = null
+    likes  = 0
+    foreach item in V:
+        if item is (Author, a):
+            Author = a
+        else if item is LIKE:
+            likes += 1
+    if Author != null:
+        output(Author, likes)
+
+//// == Job 2                        == ////
+//// == Input = P1 (u, likes), D3    == ////
+//// == Output = P2 (u, total likes) == ////
+
+Map2a(u, likes):               // only give Map2a P1 to read
+    output(u, (LIKES, likes))
+
+Map2b(_, u):                   // only give Map2b D3 to read
+    output(u, PLAYER)
+
+Reduce2(u,V):
+    is_player      = false
+    totalLikes     = 0
+    foreach item in V:
+        if item is PLAYER:
+            is_player = true
+        elseif item is (LIKES, likes):
+            totalLikes += likes
+    if is_player:
+        output(u, totalLikes)
+
+//// == Job 3                 == ////
+//// == Input = P2 (u, score) == ////
+//// == Output = K as userIDs == ////
+
+
+Map3(u, score):                   // only give Map3 P2 to read
+    output(1, (u,score))
+
+Reduce3(1,V):
+    top = get top K from V by score
+    foreach (u,score) in top:
+        output(u,_)
