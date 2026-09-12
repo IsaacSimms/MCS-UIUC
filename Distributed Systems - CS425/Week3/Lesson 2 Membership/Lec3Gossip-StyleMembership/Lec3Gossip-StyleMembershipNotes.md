@@ -15,3 +15,11 @@ There is a defined threshold for timing out.(known as T_fail) If a row's timer s
         This is done to prevent edge cases where proccess will keep deleting failed processes out of their membership lists and then adding the failed process back as a new process from neighbor nodes over and over. 
 
 ## analysis
+T_gossip is the protocol period, the fixed time in which each node runs a gossip
+- A single heartbeat period takes O(log(N)) time to propogate as long as there are no bottlenecks such as network
+- The amount of time it takes the heartbeat to propagate is inversely proportionate to bandwidth allowed
+- If T_gossip is decreased you get a higher bandwidth (same amount of things happening in a shorter period of time)
+    dissemination is faster and detection time drops
+    **T_gossip is a tradeoff between detection time and bandwidth**
+- If T_fail and T_cleanup are increased you get longer detection times but better accuracy
+- 
