@@ -16,7 +16,7 @@ There is a defined threshold for timing out.(known as T_fail) If a row's timer s
 
 ## analysis
 T_gossip is the protocol period, the fixed time in which each node runs a gossip
-- A single heartbeat period takes O(log(N)) time to propogate as long as there are no bottlenecks such as network
+- A single heartbeat period takes O(log(N)) time to propagate as long as there are no bottlenecks such as network
 - The amount of time it takes the heartbeat to propagate is inversely proportionate to bandwidth allowed
 - If T_gossip is decreased you get a higher bandwidth (same amount of things happening in a shorter period of time)
     dissemination is faster and detection time drops

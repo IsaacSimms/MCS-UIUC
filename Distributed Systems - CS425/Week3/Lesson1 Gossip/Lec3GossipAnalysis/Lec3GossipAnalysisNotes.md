@@ -57,7 +57,7 @@ The failure of nodes  & packet loss happen to all infected nodes all at once, so
 #### Note
 Log(N) is not constant in theory but it is a very slowly growing number. log(1000) = 10 while log(1b) = 30 and the log of all IPv4 addresses is 32
     and tt is common in practice to consider it constant
-Both push and pull gossip protocols are not necassrily network topology aware
+Both push and pull gossip protocols are not necessarily network topology aware
 
 ## Pull protocol
 **In all forms of gossip including pull, it takes O log(N) rounds before N/2 get the gossip**
