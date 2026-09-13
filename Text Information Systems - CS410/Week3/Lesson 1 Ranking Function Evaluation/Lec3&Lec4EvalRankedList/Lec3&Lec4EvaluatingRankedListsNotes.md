@@ -28,6 +28,26 @@ One way to measure the precision-recall curve, look at all the same under the li
 - Precision is sensitive to the rank of each relevant doc
 - Looks at a single query, and the corresponding results
   
-### MAP
+### MAP & gMAP
+For both of these, you are still taking the average percision from many different ranked list results and "smashing" them together into a mean in some way.
+
 MAP  = the *arithmetic* mean of average precision over a set of many queries
+    This is the traditional way that you would find the mean of something. 
+        Take all of the average precision values in question and add them together.
+        then divide that new value by how many original values where added together.
+    MAP is dominated by large values
+        It means the query is easy, with a high average position
+    If you are you are evaluating a ranking function hoping to improve it or analyze it for all types of queries, MAP is a better option
+
 gMAP = the *geometric* mean of average precision over a set of many queries
+    gMAP does end with a mean value, but you get there through a different methodlogy.
+        Take all of the average precision values (Q) in question and *multiply* them together.
+        then take the Q-th root of that value to find the gMAP
+    gMAP is dominated by low values
+        Poor performing queries with a low average position
+    Therefore, if you are evaluating a ranking function with the hopes of attempting to improve the algorithm for poorly performing queries, gMAP is a better option.
+
+### Special case, Mean Reciprocal Rank
+This is when there is only one relevant document in the collection (known item search)
+Average precision = Reciprocal Rank = 1/r
+Mean average precision --> mean reciprocal rank
