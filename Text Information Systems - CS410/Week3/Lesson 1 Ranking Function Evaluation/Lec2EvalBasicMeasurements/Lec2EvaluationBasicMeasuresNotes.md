@@ -40,5 +40,14 @@ Ideal results numerically look like Precision = Recall = 1.0
 **Note:** Any set/measurement can be defined by a cutoff. (example: precision at first ten docs in the ranked list is what is common to care about when ranking web results)
 
 ## F-Measure
-F-measure is an equation to combine precision and recall into a single value.
-Technically, a "hermonic mean" Of precision and recall
+see "Text Information Systems - CS410/Week3/Lesson 1 Ranking Function Evaluation/Lec2EvaluationBasicMeasuresNotes.md"
+F-measure is an equation to combine precision and recall into a single value
+Technically, a "harmonic mean" Of precision and recall
+
+F_beta = ((beta^2 + 1) P * R) / ((beta^2 * P) + R)
+P    = precision
+R    = Recall
+Beta = parameter (often set to 1)
+
+When beta is set to one, that is a special F-measure called F_1:
+F_1 = (2PR) / (P + R)
