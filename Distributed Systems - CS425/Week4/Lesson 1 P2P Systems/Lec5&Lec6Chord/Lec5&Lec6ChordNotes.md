@@ -20,7 +20,7 @@ This like hash tables are widely used in a variety of cloud computing architectu
 
 ### Finger  table
 - You can also use a **finger table**. Every node keeps a table with n + 2^i values in it. That is used to navigate to the next peer
-    See "Distributed Systems - CS425/Week4/Lesson 1 P2P Systems/FingerTables.png"
+    See "Distributed Systems - CS425/Week4/Lesson 1 P2P Systems/Lec5&Lec6Chord/FingerTables.png"
     "In a Chord P2P system with m=8, a peer with id 33 is considering the following peers for its i=3 finger table entry: 40, 42, and 44. Which one is the best (correct) choice?"
     33 + 2^3 = 41. That is the start, not the first successor peer. Meaning, 42 is the answer.
 
