@@ -1,2 +1,9 @@
 # Local editor settings (cSpell dictionary, etc.)
 .vscode/settings.json
+
+# CS410 MP1 generated Lucene indexes and preprocessed corpus
+indexes/
+processed_corpus/
+
+# CS410 MP1 AP News corpus (~437MB; exceeds GitHub's 100MB file limit)
+Text Information Systems - CS410/Programming/MP1/CS410-MP1-code/data/apnews/apnews.dat
