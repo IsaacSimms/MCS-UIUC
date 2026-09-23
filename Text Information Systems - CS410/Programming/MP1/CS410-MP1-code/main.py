@@ -4,6 +4,7 @@ from tqdm import tqdm
 from pyserini.search.lucene import LuceneSearcher
 from pyserini.index.lucene import LuceneIndexReader as IndexReader
 import numpy as np
+import matplotlib.pyplot as plt
 import subprocess
 
 
@@ -88,13 +89,108 @@ def compute_ndcg(results, qrels, k=10):
         return 0.0
     return np.mean(ndcg_scores)
 
+## == calculates the Precision@10 == ##
+def compute_precision_at_k(results, qrels, k=10, threshold=0):
+    """Fraction of the top-k hits whose relevance is greater than threshold.
 
+    Documents missing from the qrels are treated as relevance 0. With
+    threshold 0, every judged Cranfield grade (1-4) counts as relevant.
+    """
+    scores = []
+    for qid, query_results in results.items():
+        if qid not in qrels:
+            continue
+        hits = query_results[:k]
+        relevant = sum(1 for docid, _ in hits if qrels[qid].get(docid, 0) > threshold)
+        scores.append(relevant / k)
+
+    if not scores:
+        print("No valid Precision scores computed")
+        return 0.0
+    return float(np.mean(scores))
+
+
+def sweep_b(searcher, queries, qrels, query_id_start, k1=0.9, top_k=10, precision_threshold=0):
+    """Search once per b in [0, 1] and record nDCG@k and Precision@k."""
+    rows = []
+    for step in range(11):
+        b = round(step * 0.1, 1)
+        searcher.set_bm25(k1=k1, b=b)
+        results = search(searcher, queries, top_k=top_k, query_id_start=query_id_start)
+        row = {
+            "b": b,
+            "ndcg@10": float(compute_ndcg(results, qrels, k=top_k)),
+            "precision@10": compute_precision_at_k(
+                results, qrels, k=top_k, threshold=precision_threshold
+            ),
+        }
+        print(f"b={b:.1f}  nDCG@10={row['ndcg@10']:.4f}  P@10={row['precision@10']:.4f}")
+        rows.append(row)
+    return rows
+
+
+def plot_b_sweep(rows, output_path, k1):
+    plt.figure()
+    plt.plot([row["b"] for row in rows], [row["ndcg@10"] for row in rows], marker="o", label="nDCG@10")
+    plt.plot(
+        [row["b"] for row in rows],
+        [row["precision@10"] for row in rows],
+        marker="o",
+        label="Precision@10",
+    )
+    plt.xlabel(f"b (k1 fixed at {k1})")
+    plt.ylabel("score")
+    plt.title("Cranfield BM25: nDCG@10 and Precision@10 vs b")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(output_path)
+    plt.close()
+
+
+def sweep_k(searcher, queries, qrels, query_id_start, b=0.4, top_k=10, precision_threshold=0):
+    """Search once per k1 and record nDCG@k and Precision@k. b stays fixed."""
+    k1_values = [0.0, 0.3, 0.6, 0.9, 1.2, 1.5, 2.0, 2.5, 3.0]
+    rows = []
+    for k1 in k1_values:
+        searcher.set_bm25(k1=k1, b=b)
+        results = search(searcher, queries, top_k=top_k, query_id_start=query_id_start)
+        row = {
+            "k1": k1,
+            "ndcg@10": float(compute_ndcg(results, qrels, k=top_k)),
+            "precision@10": compute_precision_at_k(
+                results, qrels, k=top_k, threshold=precision_threshold
+            ),
+        }
+        print(f"k1={k1:.1f}  nDCG@10={row['ndcg@10']:.4f}  P@10={row['precision@10']:.4f}")
+        rows.append(row)
+    return rows
+
+
+def plot_k_sweep(rows, output_path, b):
+    plt.figure()
+    plt.plot([row["k1"] for row in rows], [row["ndcg@10"] for row in rows], marker="o", label="nDCG@10")
+    plt.plot(
+        [row["k1"] for row in rows],
+        [row["precision@10"] for row in rows],
+        marker="o",
+        label="Precision@10",
+    )
+    plt.xlabel(f"k1 (b fixed at {b})")
+    plt.ylabel("score")
+    plt.title("Cranfield BM25: nDCG@10 and Precision@10 vs k1")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(output_path)
+    plt.close()
+
+
+## == Driver code == ##
 def main():
     """main function for searching"""
 
     """=======TODO: Choose Dataset======="""
     # You can choose from "cranfield", "apnews", and "new_faculty" for dataset
-    cname = "apnews"
+    cname = "cranfield"
     """============================"""
 
     base_dir = f"data/{cname}"
@@ -133,28 +229,55 @@ def main():
     print(f"Number of qrels: {len(qrels)}")
     print(f"Sample qrel: {list(qrels.items())[0] if qrels else 'No qrels'}")
 
-    # Search
+    # Search once per b. b changes, k1 is a constant
     searcher = LuceneSearcher(index_dir)
+    k1 = 0.9
+    precision_threshold = 0
+    rows = sweep_b(
+        searcher,
+        queries,
+        qrels,
+        query_id_start,
+        k1=k1,
+        precision_threshold=precision_threshold,
+    )
 
-    """=======TODO: Set Ranking Hyperparameters======="""
-    searcher.set_bm25(k1=0.9, b=0.4)
-    # searcher.set_rm3(20, 10, 0.5) # optional query expansion
-    """========================================="""
+    # define selection
+    sweep = {
+        "dataset": cname,
+        "k1": k1,
+        "precision_threshold": precision_threshold,
+        "rows": rows,
+    }
+    scores_path = f"bm25_b_sweep_{cname}.json"
+    plot_path = f"bm25_b_sweep_{cname}.png"
+    with open(scores_path, "w") as f:
+        json.dump(sweep, f, indent=2)
+    plot_b_sweep(rows, plot_path, k1)
+    print(f"Wrote {scores_path} and {plot_path}")
 
-    results = search(searcher, queries, query_id_start=query_id_start)
-
-    # Debug info
-    print(f"Number of results: {len(results)}")
-    print(f"Sample result: {list(results.items())[0] if results else 'No results'}")
-
-    # Evaluate
-    topk = 10
-    ndcg = compute_ndcg(results, qrels, k=topk)
-    print(f"NDCG@{topk}: {ndcg:.4f}")
-
-    # Save results
-    with open(f"results_{cname}.json", "w") as f:
-        json.dump({"results": results, "ndcg": ndcg}, f, indent=2)
+    # Search once per k1. k1 changes, b stays at the Pyserini default.
+    b = 0.4
+    k_rows = sweep_k(
+        searcher,
+        queries,
+        qrels,
+        query_id_start,
+        b=b,
+        precision_threshold=precision_threshold,
+    )
+    k_sweep = {
+        "dataset": cname,
+        "b": b,
+        "precision_threshold": precision_threshold,
+        "rows": k_rows,
+    }
+    k_scores_path = f"bm25_k_sweep_{cname}.json"
+    k_plot_path = f"bm25_k_sweep_{cname}.png"
+    with open(k_scores_path, "w") as f:
+        json.dump(k_sweep, f, indent=2)
+    plot_k_sweep(k_rows, k_plot_path, b)
+    print(f"Wrote {k_scores_path} and {k_plot_path}")
 
 
 if __name__ == "__main__":
