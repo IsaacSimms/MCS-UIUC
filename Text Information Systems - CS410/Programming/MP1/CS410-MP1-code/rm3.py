@@ -17,7 +17,7 @@ def main():
     """Score the chosen dataset with BM25 plus RM3 pseudo-relevance feedback."""
 
     # Edit cname to "cranfield", "apnews", or "new_faculty".
-    cname = "cranfield"
+    cname = "apnews"
     top_k = 10
     precision_threshold = 0
     # Same untuned BM25 pair used as the Task 2 baseline.

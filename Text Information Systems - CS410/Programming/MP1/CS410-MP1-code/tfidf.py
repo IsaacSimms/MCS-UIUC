@@ -18,7 +18,7 @@ def main():
     """Score the chosen dataset with Lucene ClassicSimilarity (TF-IDF)."""
 
     # Edit cname to "cranfield", "apnews", or "new_faculty".
-    cname = "cranfield"
+    cname = "apnews"
     top_k = 10
     precision_threshold = 0
 

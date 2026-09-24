@@ -190,7 +190,7 @@ def main():
 
     """=======TODO: Choose Dataset======="""
     # You can choose from "cranfield", "apnews", and "new_faculty" for dataset
-    cname = "cranfield"
+    cname = "apnews"
     """============================"""
 
     base_dir = f"data/{cname}"
