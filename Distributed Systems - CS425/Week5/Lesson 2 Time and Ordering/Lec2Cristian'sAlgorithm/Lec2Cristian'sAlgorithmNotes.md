@@ -11,5 +11,3 @@ All processes sync with a time server.
 #### fixing these issues
 Processe measures the round-trip-time of a message exchange between the time server and the process, and accounts for that during clock synchronization.
 (adds minimum transition latency and other known overheads)
-
-zs
