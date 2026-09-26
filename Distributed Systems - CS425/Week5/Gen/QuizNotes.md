@@ -16,11 +16,11 @@ these timestamps are a single int
 You need to be able to look at a lamprot timestamp graph and diagnose what the timestamp is at any given point.
 Same for Vector timestamps.
 This "look at timestamp graphs and be able to produce a number" concept is 
+**WHENEVER YOU GET THESE TIMESTAMPING PROBLEMS THE FIRST THING YOU SHOULD DO IS WRITE OUT THE VALUES AT EVERY EVENT & MESSAGE SEND/RECEIVE. IT MAKES THE PROCESS EASIER**
 
 
 
 Understand how bloom filters work at a granular level. How bits are set to 0/1
-
 # CS425 — Bloom filters (quiz mechanics)
 
 Created by: Isaac Simms
