@@ -27,4 +27,5 @@ X_ij = f(u_i, o_j), where f maps U × O to real numbers.
 Memory-based = keep raw rating matrix of item in memory. No model is fit. to fill the missing user_a rating on the object, find users similar to user_a and take the weighted average of their ratings.
     *user_a's rating of object_o is not taken into account here, that field is empty*
 There are sub methods differing in the similar weights.
+Not all users contribute the same amount to the metric. The weights control that inference
 Algo in Screenshot is the memory-based approach
