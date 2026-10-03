@@ -27,5 +27,20 @@ X_ij = f(u_i, o_j), where f maps U × O to real numbers.
 Memory-based = keep raw rating matrix of item in memory. No model is fit. to fill the missing user_a rating on the object, find users similar to user_a and take the weighted average of their ratings.
     *user_a's rating of object_o is not taken into account here, that field is empty*
 There are sub methods differing in the similar weights.
-Not all users contribute the same amount to the metric. The weights control that inference
+Not all users contribute the same amount to the metric. The weights control that inference. 
+    If the recommendation system is pulling content for user_a, and user_i is more similar to user_a then all other users, then user_i is going to control the most weight.
 Algo in Screenshot is the memory-based approach
+
+## User Similarity Measures
+User similarity is the weight w(a,i) in the memory-based predictor. The formula that answers the question: how much should user_i's rating of object_j count towards predicting user_'s missing value. 
+The pearson correlation coefficient (in screenshot) is the equation here. Only sum over items both users have rated.
+Cosine is another
+
+## Recommendation summary
+- Recommendation filtering is "easy" as compared to pull based information retrieval.
+Expectation is low, any successful recommendation is generally better then none.-
+- Filtering is "hard" bc the decision has to be immediate and binary.
+Also difficult due to data sparseness (limited feedback).
+And cold start (there is little user information at the beginning).
+- Understand difference between content-based vs. collaborative filtering vs hybrid
+- Recommendation is often combined with search for a push + pull architecture
