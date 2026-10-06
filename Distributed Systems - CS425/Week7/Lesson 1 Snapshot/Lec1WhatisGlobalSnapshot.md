@@ -21,7 +21,7 @@
 ## State
 Any event changes effects the global state. This includes:
 - send
-- recieve
+- receive
 - local step
 
 Translations obey causality. Snapshot taken on every execution in the series of steps (causal path) that the system is taking as it completes any sort of action.
