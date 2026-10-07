@@ -12,3 +12,8 @@ Can be delievered at different times at diff processes, but order is maintained
 
 A multicast M is delivered in view V at Pi if Pi delivers V, then delivers M, then later delivers the next view. The gap between two view deliveries is the view."
 
+### The view contract
+1. The set of multicasts delivered in a given view is the same at every correct process that was in that view. "What happens in a view stays in that view"
+2. The sender of the multicast is a member of all views it was sent to
+3. If Pi fails to deliver M in V while other members of V did, Pi is removed from the next view those others deliver.
+
