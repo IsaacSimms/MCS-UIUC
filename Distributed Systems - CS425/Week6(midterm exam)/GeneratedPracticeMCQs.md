@@ -48,11 +48,15 @@ b. W = 4, R = 2
 c. W = 4, R = 3
 d. W = 2, R = 5
 
+c
+
 6. In a system that only guarantees eventual consistency, which run is IMPOSSIBLE?
 a. A client reads a stale value after its own write was acknowledged
 b. Two clients reading the same key at the same moment get different values
 c. A read returns the value of a write that was issued only after that read's result came back to the reader
 d. Replicas disagree for a short time after writes to the key stop
+
+c
 
 7. Which statement about consistency models is TRUE?
 a. Sequential consistency requires all operations to be ordered by real time across all clients
@@ -60,11 +64,15 @@ b. Linearizability is a weaker model than sequential consistency
 c. Sequential consistency requires one global order that respects each client's program order, but that order may disagree with real time across different clients
 d. Causal consistency is stronger than sequential consistency
 
+
+
 8. A Cassandra ring has nodes in clockwise order N1, N2, N3, N4, N5, N6, N7, N8. Racks: N1, N3, N7 in rack 1; N2, N4, N5 in rack 2; N6, N8 in rack 3. NetworkTopologyStrategy places the first replica of a key at N4. Where does the second replica go?
 a. N3
 b. N5
 c. N6
 d. N7
+
+(go clockwise until you hit a different rack) c
 
 9. In Cassandra, instead of a Bloom filter per SSTable, you store the full list of keys present in that SSTable. Which is the best description of the tradeoff?
 a. No more false positives, but much more memory per SSTable (and lookups get more expensive as the list grows)
@@ -72,11 +80,15 @@ b. Eliminates the false negatives that Bloom filters produce
 c. Uses less memory and eliminates false positives
 d. Writes get slower because the SSTable must be re-sorted on each lookup
 
+a
+
 10. Running Cristian's algorithm, the client measures RTT = 10 ms. The minimum client→server latency is 1 ms and the minimum server→client latency is 2 ms. The accuracy of the client's clock after synchronization is:
 a. ±1.5 ms
 b. ±3.5 ms
 c. ±5 ms
 d. ±7 ms
+
+b (clock synchronization accuuracy = (RTT - latency1 - latency2) / 2)
 
 11. A Chord ring has 64 points (m = 6) and peers 5, 18, 30, 44, 57. A message for key 3 starts at peer 30. Using the Chord routing algorithm (successor check, then closest preceding finger), the path is:
 a. 30 → 44 → 57 → 5
@@ -90,11 +102,15 @@ b. (C, 51, 205), failed at 245
 c. (C, 51, 212), failed at 252
 d. (C, 48, 205), failed at 245
 
+c
+
 13. In SWIM with round-robin pinging plus a random permutation of the membership list after each traversal, the WORST-CASE number of protocol periods before a failed process is first detected is:
 a. e/(e − 1)
 b. O(log N)
 c. 2N − 1
 d. Unbounded
+
+c
 
 14. In a Gnutella overlay, every peer has exactly 4 neighbors and there are no cycles within 3 hops of peer A. A sends a Query whose TTL lets it travel at most 3 hops. Peers never forward duplicates or forward back to the sender. How many peers (not counting A) receive the Query?
 a. 12
@@ -108,11 +124,15 @@ b. S32
 c. S41
 d. Nowhere, the task cannot be scheduled
 
+b (rack local first if machine busy)
+
 16. A MapReduce job runs on 10 machines with 4 containers each. There are 100 map tasks (30 s each) and 60 reduce tasks (20 s each). Each map task produces 50 MB of output, and the shuffle runs over a 4 Gbps network. Assuming map, shuffle, and reduce run one after the other, the total job time is about:
 a. 115 s
 b. 130 s
 c. 140 s
 d. 210 s
+
+c (take map time, add reduce time (waves) add shuffle/network time)
 
 17. A datacenter has 5,000 servers, each with an MTTF of 60 months (assume 30-day months). The MTTF until the next server failure in the datacenter is approximately:
 a. 0.36 hours
@@ -120,11 +140,15 @@ b. 8.64 hours
 c. 14.4 hours
 d. 12 days
 
+(60 months * 30 days * 24 hours = 43,200 MTTF per server) (43,200 / 5,000 servers = 8.64 hr MTTF for 5k servers)
+
 18. A Cassandra key has 3 replicas, and one replica is down when a write arrives. What does the coordinator do?
 a. Rejects the write until the replica recovers
 b. Writes to the live replicas and keeps a hint, replaying the write to the down replica when it comes back
 c. Permanently promotes a new replica on the same rack
 d. Immediately triggers a read repair
+
+b
 
 ---
 ---
