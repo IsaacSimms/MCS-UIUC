@@ -47,3 +47,24 @@ Filename still hashes to group id and query is still sent to that group directly
 
 But, Kelips is a memory hungry architecture. To answer for a file every node in the group stores the filetuple, and every node stores full membership of its own group in memory.
 When there are fewer affinity lists there are more nodes in each list. Meaning to answer for a file, a node has to store a larger membership list in memory. Therefore, the fewer affinity lists there the more memory usage increases.
+
+d. In Cassandra, instead of using the Bloom filter along with an SSTable,
+what if you simply use a list of the keys present in that SSTable? Give one
+advantage and one disadvantage of this design choice.
+
+A bloom filter is a fixed-size bit array accompanied by some hash functions.
+It sits in front of the SSTable (In memory) and is able to tell entities that key *could* be in this table or no, it definitely is not.
+When a key gets inserted into a SSTable and needs to be inserted into the accompanying bloom filter:
+    hash the key with each function --> that result is the index in the new slot of the bit array.
+    Set those bits to 1.
+To test for a key you hash it the same way and check the bits, looking for a match.
+
+This process adds some advantages over some other options that could work here in theory.
+The hashed and indexed key only needs a few bits. Much less space in memory required then what a key would require.
+You can still get false positives but you are never going to get a "no" out of a bloom filter even though the key is present, which is exact.
+The time is consestant for insert and lookup. Linear efficient. 
+
+A static list of all the keys in the SSTable would not only be exact, it would be precise. You would never get that false positive, where the list returns that the key exists in the SSTable but it does not.
+(Which can happen with bloom filters)
+You are also going to see reduced complexity in the architecture, since you do not need to use hashing functions or bit arithmetic.
+The disadvantages of the static list are the exact advantages of a bloom filter. Most notably, the memory usage would be much higher with a static list. 
