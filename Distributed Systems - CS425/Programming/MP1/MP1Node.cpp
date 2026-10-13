@@ -121,8 +121,9 @@ int MP1Node::initThisNode(Address *joinaddr) {
     /*
     * This function is partially implemented and may require changes
     */
-	int id = *(int*)(&memberNode->addr.addr);
-	int port = *(short*)(&memberNode->addr.addr[4]);
+   // == the id and port of the node for after they are copied out of its address. initialized to zero == //
+	int id = 0;
+	short port = 0;
 
 	memberNode->bFailed = false;
 	memberNode->inited = true;
@@ -133,6 +134,8 @@ int MP1Node::initThisNode(Address *joinaddr) {
 	memberNode->pingCounter = TFAIL;
 	memberNode->timeOutCounter = -1;
 	initMemberListTable(memberNode);
+	selfIdPort(id, port);
+	upsert(id, port, memberNode->heartbeat);
 
     return 0;
 }
@@ -185,9 +188,7 @@ int MP1Node::introduceSelfToGroup(Address *joinaddr) {
 * DESCRIPTION: Wind up this node and clean up state
 */
 int MP1Node::finishUpThisNode(){
-    /*
-     * Your code goes here
-     */
+    return 0; // int signature must return a value; Application::run ignores it
 }
 
 /**
@@ -209,7 +210,7 @@ void MP1Node::nodeLoop() {
     	return;
     }
 
-    // ...then jump in and share your responsibilites!
+    // ...then jump in and share your responsibilities!
     nodeLoopOps();
 
     return;
@@ -240,9 +241,28 @@ void MP1Node::checkMessages() {
  * DESCRIPTION: Message handler for different message types
  */
 bool MP1Node::recvCallBack(void *env, char *data, int size ) {
-    /*
-    * Your code goes here
-    */
+	if (data == NULL || size < (int)sizeof(MessageHdr)) {
+		free(data);
+		return true;
+	}
+
+	MessageHdr *msg = (MessageHdr *)data;
+	switch (msg->msgType) {
+		case JOINREQ:                   // peer asking introducer to add
+			handleJoinReq(data, size);
+			break;
+		case JOINREP:                   // join introducer's list (handler sets 'inGroup')
+			handleJoinRep(data, size);
+			break;
+		case GOSSIP:                    // membership list from node already in group
+			handleGossip(data, size);
+			break;
+		default:
+			break;
+	}
+
+	free(data);
+	return true;
 }
 
 /**
@@ -253,12 +273,222 @@ bool MP1Node::recvCallBack(void *env, char *data, int size ) {
 *                 Propagate your membership list
 */
 void MP1Node::nodeLoopOps() {
-    
-    /*
-     * Your code goes here
-     */
+	int id = 0;
+	short port = 0;
+	int now = par->getcurrtime();
+
+	memberNode->heartbeat++; // the node's own pulse increment for that round
+	selfIdPort(id, port);
+	upsert(id, port, memberNode->heartbeat);
+
+	for (vector<MemberListEntry>::iterator it = memberNode->memberList.begin(); it != memberNode->memberList.end(); ) {
+		int memberId = it->getid();
+		short memberPort = it->getport();
+		long age = (long)now - it->gettimestamp(); // how many rounds have passed since a row's last heartbeat
+
+        // run if row is other member and age is greater then 20
+		if (!isSelf(memberId, memberPort) && age > TREMOVE) { 
+			// Log this pair once. The insert blocks a second removal line.
+			if (removed.find(make_pair(memberId, memberPort)) == removed.end()) {
+				Address removedAddr = makeAddress(memberId, memberPort);
+				log->logNodeRemove(&memberNode->addr, &removedAddr);
+				removed.insert(make_pair(memberId, memberPort));
+			}
+			it = memberNode->memberList.erase(it);
+		}
+		else {
+			++it; // advance to next row
+		}
+	}
+
+	// Send the remaining list to every other member. Rows older than TFAIL and still
+	// within TREMOVE stay included and still receive a copy.
+	for (vector<MemberListEntry>::iterator it = memberNode->memberList.begin(); it != memberNode->memberList.end(); ++it) {
+		if (isSelf(it->getid(), it->getport())) {
+			continue;
+		}
+		Address dest = makeAddress(it->getid(), it->getport());
+		sendList(GOSSIP, &dest);
+	}
 
     return;
+}
+
+/**
+ * FUNCTION NAME: selfIdPort
+ *
+ * DESCRIPTION: Read this node's id and port from its address bytes
+ */
+void MP1Node::selfIdPort(int &id, short &port) {
+	memcpy(&id, memberNode->addr.addr, sizeof(int));
+	memcpy(&port, memberNode->addr.addr + 4, sizeof(short));
+}
+
+/**
+ * FUNCTION NAME: makeAddress
+ *
+ * DESCRIPTION: Build an Address from an id and port
+ */
+Address MP1Node::makeAddress(int id, short port) {
+	Address addr;
+	memcpy(&addr.addr[0], &id, sizeof(int));
+	memcpy(&addr.addr[4], &port, sizeof(short));
+	return addr;
+}
+
+/**
+ * FUNCTION NAME: isSelf
+ *
+ * DESCRIPTION: True when id and port name this node
+ */
+bool MP1Node::isSelf(int id, short port) {
+	int selfId = 0;
+	short selfPort = 0;
+	selfIdPort(selfId, selfPort);
+	return id == selfId && port == selfPort;
+}
+
+/**
+ * FUNCTION NAME: upsert
+ *
+ * DESCRIPTION: Insert a member, or replace its heartbeat when the new one is strictly greater
+ */
+void MP1Node::upsert(int id, short port, long heartbeat) {
+	// A deleted id stays out. Reinserting it produces a second removal line.
+	if (removed.find(make_pair(id, port)) != removed.end()) {
+		return;
+	}
+
+	for (vector<MemberListEntry>::iterator it = memberNode->memberList.begin(); it != memberNode->memberList.end(); ++it) {
+		if (it->getid() == id && it->getport() == port) {
+			// An equal heartbeat leaves the timestamp in place, so a dead row can age past TREMOVE.
+			if (heartbeat > it->getheartbeat()) {
+				it->setheartbeat(heartbeat);
+				it->settimestamp(par->getcurrtime());
+			}
+			return;
+		}
+	}
+
+	memberNode->memberList.push_back(MemberListEntry(id, port, heartbeat, par->getcurrtime()));
+	Address added = makeAddress(id, port);
+	log->logNodeAdd(&memberNode->addr, &added);
+}
+
+/**
+ * FUNCTION NAME: sendList
+ *
+ * DESCRIPTION: Send this node's current membership list to dest
+ */
+void MP1Node::sendList(MsgTypes msgType, Address *dest) {
+	int count = (int)memberNode->memberList.size();
+	int entrySize = (int)(sizeof(int) + sizeof(short) + sizeof(long));
+	int msgsize = (int)sizeof(MessageHdr) + (int)sizeof(int) + count * entrySize;
+	char *buf = (char *)malloc(msgsize);
+	char *cursor;
+
+	if (buf == NULL) {
+		return;
+	}
+
+	cursor = buf + sizeof(MessageHdr) + sizeof(int);
+
+	((MessageHdr *)buf)->msgType = msgType;
+	memcpy(buf + sizeof(MessageHdr), &count, sizeof(int));
+
+	for (vector<MemberListEntry>::iterator it = memberNode->memberList.begin(); it != memberNode->memberList.end(); ++it) {
+		int id = it->getid();
+		short port = it->getport();
+		long heartbeat = it->getheartbeat();
+		memcpy(cursor, &id, sizeof(int));
+		cursor += sizeof(int);
+		memcpy(cursor, &port, sizeof(short));
+		cursor += sizeof(short);
+		memcpy(cursor, &heartbeat, sizeof(long));
+		cursor += sizeof(long);
+	}
+
+	emulNet->ENsend(&memberNode->addr, dest, buf, msgsize);
+	free(buf);
+}
+
+/**
+ * FUNCTION NAME: applyMembership
+ *
+ * DESCRIPTION: Upsert each id, port, and heartbeat packed after the message header
+ */
+void MP1Node::applyMembership(char *data, int size) {
+	int header = (int)sizeof(MessageHdr) + (int)sizeof(int);
+	int entrySize = (int)(sizeof(int) + sizeof(short) + sizeof(long));
+	int count = 0;
+	char *cursor;
+
+	if (size < header || entrySize <= 0) {
+		return;
+	}
+
+	memcpy(&count, data + sizeof(MessageHdr), sizeof(int));
+	if (count < 0 || count > (size - header) / entrySize) {
+		return;
+	}
+
+	cursor = data + header;
+	for (int i = 0; i < count; i++) {
+		int id = 0;
+		short port = 0;
+		long heartbeat = 0;
+		memcpy(&id, cursor, sizeof(int));
+		cursor += sizeof(int);
+		memcpy(&port, cursor, sizeof(short));
+		cursor += sizeof(short);
+		memcpy(&heartbeat, cursor, sizeof(long));
+		cursor += sizeof(long);
+		upsert(id, port, heartbeat);
+	}
+}
+
+/**
+ * FUNCTION NAME: handleJoinReq
+ *
+ * DESCRIPTION: Add the joining member and reply with the current list
+ */
+void MP1Node::handleJoinReq(char *data, int size) {
+	int minSize = (int)sizeof(MessageHdr) + 6 + 1 + (int)sizeof(long);
+	int id = 0;
+	short port = 0;
+	long heartbeat = 0;
+	Address dest;
+
+	if (size < minSize) {
+		return;
+	}
+
+	memcpy(&id, data + sizeof(MessageHdr), sizeof(int));
+	memcpy(&port, data + sizeof(MessageHdr) + sizeof(int), sizeof(short));
+	// Address is 6 bytes, then one unused byte, then the heartbeat.
+	memcpy(&heartbeat, data + sizeof(MessageHdr) + 6 + 1, sizeof(long));
+	upsert(id, port, heartbeat);
+	dest = makeAddress(id, port);
+	sendList(JOINREP, &dest);
+}
+
+/**
+ * FUNCTION NAME: handleJoinRep
+ *
+ * DESCRIPTION: Enter the group and merge the introducer's membership list
+ */
+void MP1Node::handleJoinRep(char *data, int size) {
+	memberNode->inGroup = true;
+	applyMembership(data, size);
+}
+
+/**
+ * FUNCTION NAME: handleGossip
+ *
+ * DESCRIPTION: Merge a gossiped membership list
+ */
+void MP1Node::handleGossip(char *data, int size) {
+	applyMembership(data, size);
 }
 
 /**

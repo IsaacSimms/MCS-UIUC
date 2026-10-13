@@ -16,6 +16,7 @@
 #include "Member.h"
 #include "EmulNet.h"
 #include "Queue.h"
+#include <set>
 
 /**
  * Macros
@@ -36,6 +37,7 @@ private:
 	Member *memberNode;
 	bool shouldDeleteMember;
 	char NULLADDR[6];
+	set<pair<int, short>> removed;
 
 public:
 
@@ -47,6 +49,7 @@ public:
 	    JOINREP,
 	    UPDATEREQ,
 	    UPDATEREP,
+	    GOSSIP,
 	    DUMMYLASTMSGTYPE
 	};
 
@@ -79,6 +82,19 @@ public:
 	void initMemberListTable(Member *memberNode);
 	void printAddress(Address *addr);
 	virtual ~MP1Node();
+
+private:
+	/* Membership helpers used by initThisNode, recvCallBack, and nodeLoopOps.
+	   Address conversion, row merge, list send, and the JOINREQ / JOINREP / GOSSIP handlers. */
+	void selfIdPort(int &id, short &port);
+	Address makeAddress(int id, short port);
+	bool isSelf(int id, short port);
+	void upsert(int id, short port, long heartbeat);
+	void sendList(MsgTypes msgType, Address *dest);
+	void applyMembership(char *data, int size);
+	void handleJoinReq(char *data, int size);
+	void handleJoinRep(char *data, int size);
+	void handleGossip(char *data, int size);
 };
 
 #endif /* _MP1NODE_H_ */
