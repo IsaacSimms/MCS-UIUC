@@ -5,5 +5,6 @@
 indexes/
 processed_corpus/
 
-# CS410 MP1 AP News corpus (~437MB; exceeds GitHub's 100MB file limit)
+# CS410 AP News corpus (~437MB; exceeds GitHub's 100MB file limit)
 Text Information Systems - CS410/Programming/MP1/CS410-MP1-code/data/apnews/apnews.dat
+Text Information Systems - CS410/Programming/MP2/_c54a3a1b26dc478f9111276a6fe991cf_MP2/MP2/data/apnews/apnews.dat
