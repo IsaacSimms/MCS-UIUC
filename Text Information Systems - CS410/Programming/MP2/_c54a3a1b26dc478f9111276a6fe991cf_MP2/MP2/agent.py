@@ -4,12 +4,13 @@ agent.py
 LangGraph-based RAG agent for MP2.
 
 Pipeline:
-1) retrieve(state)        -> collects context via Pyserini BM25 (+ optional compression)
+1) retrieve(state)        -> one BM25 search, or 2-4 sub-queries fused for a long question
 2) generate_answer(state) -> prompts an LLM (Ollama) with the retrieved context
 
 State keys (GraphState):
 - question: str                     # user question (required)
 - context: List[str]                # accumulated evidence passages
+- subqueries: List[str]             # long-question search lines; empty otherwise
 - retriever: Optional[BaseRetriever]# allow injection (for testing)
 - final_answer: Optional[str]       # model's answer
 - error: Optional[str]              # error message if any
@@ -17,6 +18,7 @@ State keys (GraphState):
 """
 
 import logging
+import re
 from typing import List
 
 from langgraph.graph import StateGraph, END
@@ -58,22 +60,92 @@ def create_agent():
 
 
 # ---------------------------------------------------------------------
+# Long questions: decompose, search each line, fuse
+# ---------------------------------------------------------------------
+# More than 200 characters, or more than one sentence, uses this branch.
+RRF_K = 60  # reciprocal rank fusion constant
+
+
+def is_long_query(question: str) -> bool:
+    text = question.strip()
+    if len(text) > 200:
+        return True
+    parts = [part for part in re.split(r"[.!?]+", text) if part.strip()]
+    return len(parts) > 1
+
+
+def parse_subqueries(text: str) -> List[str]:
+    queries = []
+    for line in (text or "").splitlines():
+        cleaned = re.sub(r"^(?:\d+[\.\)\:]\s*|[\-\*\u2022]\s+)", "", line).strip()
+        if not cleaned:
+            continue
+        queries.append(cleaned)
+        if len(queries) == 4:  # assignment cap
+            break
+    return queries
+
+
+def decompose_query(question: str) -> List[str]:
+    try:
+        llm = OllamaLLM(model=config.OLLAMA_MODEL)
+        prompt = ChatPromptTemplate.from_template(
+            "Break the user question into 2 to 4 concise search queries.\n"
+            "Cover different parts of the question. Each query is a short phrase or a single question.\n"
+            "Put one query per line. Do not number the lines. Do not add any other text.\n"
+            "\n"
+            "Question:\n"
+            "{question}\n"
+            "\n"
+            "Queries:"
+        )
+        response = (prompt | llm).invoke({"question": question})
+        content = response if isinstance(response, str) else str(response)
+        return parse_subqueries(content)
+    except Exception:
+        logger.exception("Query decomposition failed")
+        return []
+
+
+def search_once(retriever, query: str):
+    docs = retriever.invoke(query)
+    if not docs and hasattr(retriever, "base_retriever"):
+        logger.info("Compression yielded 0 docs; falling back to base retriever.")
+        docs = retriever.base_retriever.invoke(query)
+    return docs
+
+
+def fuse_subqueries(retriever, subqueries: List[str]):
+    searcher = retriever.base_retriever if hasattr(retriever, "base_retriever") else retriever
+    scores = {}
+    best_rank = {}
+    chosen = {}
+    for subquery in subqueries:
+        hits = searcher.invoke(subquery)  # BM25 only; compression stays on the single-query path
+        for rank, doc in enumerate(hits, start=1):
+            metadata = getattr(doc, "metadata", None) or {}
+            docid = str(metadata.get("docid", id(doc)))
+            scores[docid] = scores.get(docid, 0.0) + 1.0 / (RRF_K + rank)
+            if docid not in chosen or rank < best_rank[docid]:
+                chosen[docid] = doc
+                best_rank[docid] = rank
+    ranked = sorted(scores, key=lambda docid: (-scores[docid], best_rank[docid], docid))
+    return [chosen[docid] for docid in ranked[: config.RETRIEVER_K]]
+
+
+# ---------------------------------------------------------------------
 # Node 1: Retrieval
 # ---------------------------------------------------------------------
 def retrieve(state: GraphState) -> GraphState:
     """
     Retrieve evidence passages for the given question.
 
-    Notes:
-    - This is where retrieval happens for the basic single-query case.
-    - If you later want to show retrieved documents, scores, or titles, keep the
-      retrieved metadata here so the output layer can format it.
-    - If you later add long / multi-sentence support, you can first break the
-      question into several sub-queries here and retrieve for each of them, then
-      merge the results into state["context"].
+    A short question uses one search. A long question is split into 2-4
+    sub-queries, each searched with BM25, then fused to the top passages.
     """
     try:
         logger.info("Starting retrieval")
+        state["subqueries"] = []
 
         query = (state.get("question") or "").strip()
         if not query:
@@ -85,11 +157,17 @@ def retrieve(state: GraphState) -> GraphState:
         # Allow DI for tests; otherwise create from config
         retriever = state.get("retriever") or create_retriever()
 
-        # Retrieve documents (ContextualCompressionRetriever or BaseRetriever)
-        docs = retriever.invoke(query)
-        if not docs and hasattr(retriever, "base_retriever"):
-            logger.info("Compression yielded 0 docs; falling back to base retriever.")
-            docs = retriever.base_retriever.invoke(query)
+        if is_long_query(query):
+            subqueries = decompose_query(query)
+            if len(subqueries) >= 2:
+                state["subqueries"] = subqueries
+                logger.info(f"Using sub-queries: {subqueries}")
+                docs = fuse_subqueries(retriever, subqueries)
+            else:
+                logger.info("Searching the original question once.")
+                docs = search_once(retriever, query)
+        else:
+            docs = search_once(retriever, query)
 
         # Build/extend context
         ctx: List[str] = list(state.get("context") or [])

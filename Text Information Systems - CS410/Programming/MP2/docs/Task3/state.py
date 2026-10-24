@@ -1,0 +1,13 @@
+from typing import List, Dict, Any, Optional
+from typing_extensions import TypedDict
+
+class GraphState(TypedDict):
+    question: str
+    context: List[str]
+    subqueries: List[str]  # empty unless a long question decomposed
+    current_step: str
+    final_answer: str
+    retriever: Any
+    web_search_tool: Any
+    error: Optional[str]
+    web_search_results: List[str]
