@@ -14,5 +14,12 @@ Anything the system outputs is measured against that gold standard to evaluate s
 That is done by quantifying the similarity between the system-generated clusters to the gold standard clusters.
 
 ## Indirect Evaluation
-Measuring whether the clusters improve some external task or benchmark. A measurement of utility
+- Measuring whether the clusters improve some external task or benchmark. A measurement of utility
 Example: better browsing, retrieval, features, etc.
+- While the measurement of the clustering is not direct, the measurement of the improvement to the utility is generally concrete.
+- “Clustering bias” is imposed by the intended application
+### Evaluation procedure:
+  - Create a test set for the intended application to quantify the performance of any system for this application
+  - Choose a baseline system to compare with
+  - Add a clustering algorithm to the baseline system → “clustering system”
+  - Compare the performance of the clustering system and the baseline in terms of any performance measure for the application
