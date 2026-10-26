@@ -49,6 +49,11 @@ You can get an accuracy, precision, and recall of each category. You need to be 
 calculate the metric separate for each category. Then take arithmetic or geometric mean of those numbers.
 Each category contributes equally regardless of how many docs
 
+#### note for aggregation choices
+In marco the mean itself can be arithmetic (dominated by high values)
+or geometric (sensitive to low values)
+
+
 ### Micro-average
 throw every document-category decision into one giant contingency table and compute precision/recall once from the pooled count.
 Larger categories dominate result.
