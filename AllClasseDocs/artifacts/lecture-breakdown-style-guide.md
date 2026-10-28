@@ -1,6 +1,6 @@
 # Lecture Breakdown Style Guide
 
-Produce a structured breakdown of the given lecture for personal notes. Match prior CS 410 summaries: plain English first, then technical precision; high-signal, no fluff. Headings may adapt to the lecture type (motivation, methods, evaluation, etc.).
+Produce a structured breakdown of the given lecture for personal notes. Match prior summaries: plain English first, then technical precision; high-signal, no fluff. Headings may adapt to the lecture type (motivation, methods, evaluation, etc.).
 
 ## Required Structure
 
