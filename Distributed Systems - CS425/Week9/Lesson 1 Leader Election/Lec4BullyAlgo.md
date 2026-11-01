@@ -13,5 +13,8 @@ This includes the failed process, which was the original leader/bully. But that 
 
 ## liveness and safety
 Bully satisfies safety. It will always elect only the highest-ID non-failed process and all correct processes will agree on it.
-It satisfies liceness only in the synchronous model. (timeout can be set to the known worse-case one-way latency (process time + message delay))
+It satisfies liveness only in the synchronous model. (timeout can be set to the known worse-case one-way latency (process time + message delay))
 
+## Complexity
+Bully generates O(N^2) messages in worst case.
+Why later algorithms prefer different trade-offs
