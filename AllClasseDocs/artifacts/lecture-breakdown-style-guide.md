@@ -8,6 +8,7 @@ Produce a structured breakdown of the given lecture for personal notes. Match pr
 
 ### TLDR
 One short paragraph stating the core idea.
+If the lecture has a key topic, concept, or term that is worth defining for the user, include a well structured 1-2 sentence defintion of that topic/concept/term.
 
 ### Key sections and what to retain
 Break into 3–5 major points. For each:
