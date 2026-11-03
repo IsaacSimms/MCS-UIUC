@@ -2,6 +2,8 @@
 **correctness criterion for concurrent transactions**
 Note: You could satisfy the ACID properties in transactions simply by only executing those transactions one at a time. But, this would be terriblely inefficient (reduced transactions per second)
 Implementing architecture that accomplishes serial equivalence allows for *concurrent* transactions while still satisfying ACID properties.
+But, you also can't just have all transactions executing all at once. Some operations conflict and/or may cause different resuts based on order.
+Read-Write, Write-Read, and Write-Write on the same object are considered conflicting
 
 ## Definition
 An interleaving of operations from multiple transactions is *serially equivalent* if there exists a serial schedule.
@@ -16,4 +18,5 @@ Serially equivalent = An interleaving operation set is serially equivalent if th
 The concurrent execution is correct exactly when its result matches what would have happened under pure serial execution in some order.
 **Serial equivalence is the correctness criterion for concurrent transactions**. Interleaving is acceptable 'exactly' when the final system state matches some serial execution fo the same transactions.
 This holds if and only if every pair of conflicting operations appears in a consistent relative order across all shared objects.
-*to be serially equivalent, the interlaving transactions (say O) must produce the same final system state as a different interleaving of those same transactions (say O')
+*to be serially equivalent, the interlaving transactions (say O) must produce the same final system state as a different interleaving of those same transactions (say O')*
+
