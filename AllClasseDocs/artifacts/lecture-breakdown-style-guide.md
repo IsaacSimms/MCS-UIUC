@@ -11,7 +11,7 @@ One short paragraph stating the core idea.
 If the lecture has a key topic, concept, or term that is worth defining for the user, include a well structured 1-2 sentence defintion of that topic/concept/term.
 
 ### Key sections and what to retain
-Break into 3–5 major points. For each:
+Break into 3–5 major points If more major points are required, that is fine. Simply shoot for 3-5 when possible. For each:
 - Open with a one-sentence everyday explanation.
 - Then the course concept, definitions, and any central formula (inline).
 - Mark the essential takeaway with **Retain**.
