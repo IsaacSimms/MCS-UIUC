@@ -6,4 +6,35 @@ Stream processing = Continuous computation over an unbounded sequence of tuples 
 ## Why Stream Processing 
 A good use case for stream processing is when there are large amounts of data that is constantly arriving.
 I.e. social media trends, site analytics, intrusion detection, etc.
- 
+MapReduce is not a good fit here because MapReduce is a batch processing architecture. (And isn't meant to be continuously running)
+
+## Apache storm
+A distributed real-time computation system that processes unbounded streams of data (tuples).
+**Low latency and high throughput**
+### definitions
+- *tuple* = ordered list of fields. 
+(username, tweet) or (URL, IP, date, time) etc.
+- *stream* = unbounded sequence of tuples
+- *spout* = source process that emits streams
+(a DB, a crawler, queue, etc.)
+- *Bolt* = the subprocess that consumes input streams > performs work > emits new streams.
+common in Storm systems that are doing operations such as filter, join, transform
+Most of storm is already built and generic enough to apply to any use case. The bolt is what an engineer will write when building a storm system in any given architecture.
+Bolts need to be fast because they are processing huge amounts of data.
+#### Parallelism vis stream groupings (Parallelizing bolts)
+    - Having multiple processes consittue a single bolt
+    - Incoming streams are split among the defined tasks
+    - Usually a single tuple is not split up, one tuple = one task
+    - Three types of groupings are popular
+        1. shuffle grouping =  Even, round-robin distribution of tuples accross the bolt's tasks.
+        2. Fields grouping = subset of tuple fields get partitioned > all tuplies with the same (defined) key go to the same task
+        3. All grouping = every bolt task receives every incoming tuple. (used in joins)
+- *Topology* = directed graph of spouts and bolts that constitutes the application
+(essentially, the long-running application)
+#### Storm cluster architecture
+- Master node
+Runs a daemon caleld *Nimbus*   
+Responsible for:
+Distributing code around cluster
+Assigning tasks to machines
+Monitoring for failures of machines
