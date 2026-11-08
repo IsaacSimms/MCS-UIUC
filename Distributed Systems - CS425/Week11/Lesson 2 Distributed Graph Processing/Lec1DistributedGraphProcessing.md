@@ -10,3 +10,10 @@ Do no get graphs confused with plots. Graphs require a network style (interconne
 Analyzing graphs to large to fit on a single machine by partitioning their vertices across a cluster of servers. 
 Each server repeatedly performs local updates on its vertices (i.e. gather neighbor values, applying a computation, scattering the results). 
 This is done until the algorithm converges. 
+
+### Graph processing operations
+- need to derive proprties and info from graphs
+- need to summarize graphs into statistics
+- need matching
+- etc.
+Graphs become very large and difficult to process (especially on one box) quite quickly 
