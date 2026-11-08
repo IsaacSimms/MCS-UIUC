@@ -35,6 +35,21 @@ Bolts need to be fast because they are processing huge amounts of data.
 - Master node
 Runs a daemon caleld *Nimbus*   
 Responsible for:
-Distributing code around cluster
-Assigning tasks to machines
-Monitoring for failures of machines
+1. Distributing code around cluster
+2. Assigning tasks to machines
+3. Monitoring for failures of machines
+
+- Worker node (runs a daemon called supervisor) 
+1. run executor that contain actual tasks.
+2. runs on a specific machine
+3. Listens to master node for work being assigned to its machines
+
+- zookeeper
+coodinator between nimbus (master) and worker (supervisor). Stores their state.
+tuple = failed when downstream "tuple tree" is not fully processes within a given timeout.
+##### failures (anchoring)
+**anchoring** = an anchor is an output to one or more inupt tuples (an emitted tuple is liked to one or more other input tuples.)
+(Includes above logic and an explicit ack/fail via OutputCollector API)
+Used to ensure reliability.
+Failure of any anchored descendant causes the root spout tuple to be replayed.
+(Forgetting to ack/fail can lead to mem leaks, use well.)
