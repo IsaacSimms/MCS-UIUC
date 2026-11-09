@@ -17,6 +17,7 @@ Break into 3–5 major points If more major points are required, that is fine. S
 - Mark the essential takeaway with **Retain**.
 - Add a light “builds on X” pointer only when it clarifies.
 - Include a short example or metaphor only if the lecture supplies one or if it is clearly high-signal for retention; otherwise omit.
+Even when including a short example, do not break up your explanation into "everday view" then "technical". Provide the short example if absolutely required, but try not to whenever possible. If it is included, provided it quickly and then enter the rest of the response, having that short example not effect the rest of the response. 
 
 ### Recap (core ideas to keep)
 Short bullet list of the essential takeaways.
