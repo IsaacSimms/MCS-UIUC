@@ -16,9 +16,9 @@ Versions if someone asks: Qdrant v1.20.0 (2026-10-22), Weaviate v1.40.4 (2026-11
 | 3:45–5:05 | 5 | The four fusion formulas |
 | 5:05–7:15 | 6–7 | The stay rule, the cluster sentence, the three picks |
 | 7:15–8:00 | 7 | Your assessment |
-| 8:00–8:50 | 8 | Four sources, one sentence each |
+| 8:00–10:00 | 8 | Ten sources, one sentence on why each one helps |
 
-If you are past 11:00 at the resources slide, drop the Citus/PgDog clause and the "hold out a labeled set" sentence. Keep the dimension cap and the four formulas.
+If you are past 10:30 when you reach the sources slide, say the pgvector README, the three fusion pages, and Qdrant capacity planning, then point at the other five. Drop the Citus/PgDog clause and the "hold out a labeled set" sentence before that. Keep the dimension cap and the four formulas.
 
 ## Slide 1 — Title (leave it up during the first two sentences)
 
@@ -160,28 +160,44 @@ I would pick Milvus when the collection is heading past one machine and I will r
 
 What I take from the four docs is that these are two product choices and one operations choice. Who writes the fusion. Whether the filter participates in the index. How many processes I am willing to run. I would start in Postgres when the text is already there and the dimension fits. I would add a dedicated engine when one of those three limits is the limit I have. I did not run these databases, and I would not rank them from a vendor recall or QPS table. Those figures do not share a dataset, and I did not rerun them.
 
-## Slide 8 — Sources (8:00–8:50)
+## Slide 8 — Sources (8:00–10:00)
 
-**On the slide.** Page name, not a paragraph.
+**On the slide.** Ten pages. Name, then URL. No paragraph on the slide. The reason each one helps is spoken, one sentence at a time, in this order.
 
 - [pgvector README](https://github.com/pgvector/pgvector/blob/v0.8.7/README.md) (v0.8.7)
+- [PostgreSQL 18 full-text search](https://www.postgresql.org/docs/18/textsearch.html)
 - [Qdrant hybrid queries](https://qdrant.tech/documentation/search/hybrid-queries/)
+- [Qdrant indexing](https://qdrant.tech/documentation/manage-data/indexing/)
+- [Qdrant capacity planning](https://qdrant.tech/documentation/capacity-planning/)
 - [Weaviate hybrid concepts](https://docs.weaviate.io/weaviate/concepts/search/hybrid-search)
+- [Weaviate filtering](https://docs.weaviate.io/weaviate/concepts/filtering)
 - [Milvus RRF ranker](https://github.com/milvus-io/milvus-docs/blob/v3.0.x/site/en/userGuide/embeddings-reranking/reranking/rrf-ranker.md)
+- [Milvus filtered search](https://github.com/milvus-io/milvus-docs/blob/v3.0.x/site/en/userGuide/search-query-get/filtered-search.md)
+- [Milvus index explained](https://github.com/milvus-io/milvus-docs/blob/v3.0.x/site/en/userGuide/indexes/index-explained.md)
 
 **Say**
 
-Four pages are the ones I would hand someone who has to make this choice.
+These ten are the pages I would hand someone who has to check this choice. One sentence on why each one helps.
 
 The pgvector README is the extension on one page: the dimension caps, the post-filter illustration, and the hybrid section that leaves the combiner to you.
 
+PostgreSQL's full-text search page is the lexical half. It documents `ts_rank` and `ts_rank_cd`. It does not document BM25, which is how you check a claim that pgvector ships BM25.
+
 Qdrant's hybrid queries page is the RRF formula, including the default `k` of 2, and the warning against adding a raw cosine score to a raw BM25 score.
 
-Weaviate's hybrid concepts page is relative score fusion and the alpha warning. Read it before trusting a client library's default.
+Qdrant's indexing page is where filterable HNSW is specified. The payload-index edges exist only for indexes that were present when the graph was built.
+
+Qdrant's capacity-planning page is the published RAM formula and a worked example. It is a formula, not a measurement of my corpus. That is the page I would use before I buy the machine.
+
+Weaviate's hybrid concepts page is relative score fusion and the alpha warning. The server uses 0.75 only when the request omits alpha. Read it before trusting a client library's default.
+
+Weaviate's filtering page is the allow-list. Search builds that list, then walks the graph, and a tight list can fall back to a flat scan.
 
 The Milvus RRF ranker page uses `k` of 60 and rank starting at 1. The code sample on that page passes `k` of 100. The default and the sample are different numbers.
 
-The filter pages I named during the talk are in the TextData community with the longer set.
+Milvus filtered search is the order on the filter slide: the predicate runs first, then approximate search runs on what remains.
+
+The Milvus index guide is the 98 percent heuristic. Past about 98 percent filtered out, the documented rule switches to brute-force FLAT, and the same page says that rule is not always right.
 
 ## Pages to name, and when
 
@@ -193,11 +209,11 @@ Say the page name out loud. Leave the URL on the slide or in the community.
 | Filter beat, Qdrant | [Indexing](https://qdrant.tech/documentation/manage-data/indexing/) |
 | Filter beat, Weaviate | [Filtering](https://docs.weaviate.io/weaviate/concepts/filtering) |
 | Filter beat, Milvus | [Filtered search](https://github.com/milvus-io/milvus-docs/blob/v3.0.x/site/en/userGuide/search-query-get/filtered-search.md) and [Index explained](https://github.com/milvus-io/milvus-docs/blob/v3.0.x/site/en/userGuide/indexes/index-explained.md) |
-| Fusion slide | The four closing links above. pgvector's lexical half, if you need it: [PostgreSQL 18 full-text search](https://www.postgresql.org/docs/18/textsearch.html) |
+| Fusion slide | The fusion pages on the closing slide: the pgvector README, [PostgreSQL 18 full-text search](https://www.postgresql.org/docs/18/textsearch.html), Qdrant hybrid queries, Weaviate hybrid concepts, and the Milvus RRF ranker |
 | Qdrant pick | [Capacity planning](https://qdrant.tech/documentation/capacity-planning/) |
 | Cluster sentence | [Qdrant overview](https://qdrant.tech/documentation/overview/), [Weaviate horizontal scaling](https://docs.weaviate.io/weaviate/concepts/cluster), [Milvus install overview](https://github.com/milvus-io/milvus-docs/blob/v3.0.x/site/en/getstarted/install-overview.md) |
 
-The TextData community still needs at least 10 saved resources. The closing slide is the four you explain. The ranked list in `docs/research/comparison.md` is the rest of that set.
+The closing slide is these ten, and the spoken walkthrough is the short explanation of why each one is useful. The ranked list in `docs/research/comparison.md` is the rest of the TextData set, including the cluster pages named during the talk.
 
 ## If someone asks
 
