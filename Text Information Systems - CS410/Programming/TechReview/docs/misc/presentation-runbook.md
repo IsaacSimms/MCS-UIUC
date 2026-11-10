@@ -88,7 +88,7 @@ The first kind keeps the vectors in the database you already operate. The other 
 
 **TLDR**
 
-This slide is how a metadata filter helps or hurts approximate search. It helps when the constraint stays in the same query. It hurts when the result comes back short, or when the engine drops the approximate index. HNSW is the graph index. On pgvector, `ef_search` is how many candidates the scan keeps before the `WHERE` runs.
+A filter is a metadata constraint, such as date or author, in the same query as the nearest-neighbor search. Text retrieval is rarely meaning alone, so that constraint and the nearest neighbors have to come back as one result. The four systems put the constraint in different places. On pgvector it runs after the approximate scan, and that is one reason I would leave. HNSW is the graph index. `ef_search` is how many candidates that scan keeps before the `WHERE`.
 
 **On the slide.** Four lines, no extra strategies.
 
@@ -99,7 +99,7 @@ This slide is how a metadata filter helps or hurts approximate search. It helps 
 
 **Say**
 
-Approximate search and a metadata predicate fight, and each project documents a different fight. A filter supports retrieval when the metadata constraint stays in the same query. It hurts retrieval when the result comes back short, or when the engine gives up the approximate index.
+A filter is a metadata constraint in the same query as the nearest-neighbor search: date, author, source, category. Text retrieval is rarely meaning alone, so the constraint and the nearest neighbors have to come back together. Approximate search and that predicate fight, and each project documents a different fight. The filter helps when it stays in the query. It hurts when the result comes back short, or when the engine gives up the approximate index. On pgvector that fight is one reason I would leave.
 
 On pgvector, after you add an HNSW index, the `WHERE` runs after that scan. The README's illustration: if the predicate matches about 10 percent of the rows, and `hnsw.ef_search` stays at its default of 40, about 4 rows survive. Ask for 10 and the filter has starved the list. Exact search, with no approximate index, does not do this. That illustration is in the pgvector README.
 
@@ -113,7 +113,7 @@ On Milvus, standard filtering applies the predicate first and then runs approxim
 
 **TLDR**
 
-This slide is hybrid search, two lists made into one ranking. A keyword score and a vector score are different units, so they cannot be added raw. Fusion is the rule that combines them. Alpha is Weaviate's mix: 0 is keywords only, 1 is vectors only. pgvector names the rule and leaves the SQL to me.
+Fusion is the rule that turns a keyword list and a nearest-embedding list into one ranking. The two scores are different units, so they cannot be added raw. A text query often wants both the shared words and the shared meaning, which is why the rule is in the talk. Three systems ship a rule. pgvector names reciprocal rank fusion and leaves the SQL to me, and that is another reason I would leave. Alpha is Weaviate's mix: 0 is keywords only, 1 is vectors only.
 
 **On the slide.** This is the one mechanism slide. Copy the formulas.
 
@@ -126,7 +126,7 @@ This slide is hybrid search, two lists made into one ranking. A keyword score an
 
 **Say**
 
-Hybrid search is two lists: a keyword list and a nearest-embedding list. A keyword score and a vector score are different units. Fusion is the rule that makes one ranking. Three of these systems ship a rule. The rules differ.
+Fusion is the rule that makes one ranking out of two lists: a keyword list and a nearest-embedding list. A keyword score and a vector score are different units, so adding them raw is not a ranking. A text query often wants both the shared words and the shared meaning, which is why this rule is the other half of the choice. Three of these systems ship one. pgvector names it and leaves the SQL to me, and that is another reason I would leave. The rules differ.
 
 Qdrant's default is reciprocal rank fusion, 1 over `k` plus rank. Rank starts at 0, and `k` defaults to 2, so the best hit on one list scores one half.
 
