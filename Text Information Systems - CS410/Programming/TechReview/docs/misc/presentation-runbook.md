@@ -20,13 +20,17 @@ Versions if someone asks: Qdrant v1.20.0 (2026-10-22), Weaviate v1.40.4 (2026-11
 
 If you are past 10:30 when you reach the sources slide, say the pgvector README, the three fusion pages, and Qdrant capacity planning, then point at the other five. Drop the Citus/PgDog clause and the "hold out a labeled set" sentence before that. Keep the dimension cap and the four formulas.
 
-## Slide 1 — Title (leave it up during the first two sentences)
+## Slide 1 — Title (leave it up while you say this)
 
 **On the slide**
 
 - Self-hosted vector databases for text retrieval
 - pgvector, Qdrant, Weaviate, Milvus
 - A choice from the docs. I did not run these systems.
+
+**Say**
+
+Keyword search finds a document that shares words with the query and misses one that says the same thing in different words. This talk is about the systems that close that gap for text retrieval: they store embeddings of the text and return the nearest ones, and they can still filter on metadata in the same query. I look at four you can run yourself, pgvector, Qdrant, Weaviate, and Milvus, and the question is when those vectors should stay in Postgres next to the text, and when retrieval needs a second system for fusion, a filter inside the index, or more than one machine. I did not run them. The comparison is from the docs.
 
 ## Slide 2 — The problem (0:00–1:00)
 
