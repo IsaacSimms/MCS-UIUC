@@ -1,0 +1,417 @@
+[
+ {
+  "start": 0.0,
+  "end": 4.0,
+  "text": "In a fraction of a second, Google Translate can make sense of your surroundings."
+ },
+ {
+  "start": 4.0,
+  "end": 9.0,
+  "text": "But this isn't the same Google Translate from the early 2000s."
+ },
+ {
+  "start": 9.0,
+  "end": 13.0,
+  "text": "Over the past two decades, the technology has gone through a complete overhaul,"
+ },
+ {
+  "start": 13.0,
+  "end": 20.0,
+  "text": "shifting from a basic pattern matching tool to a sophisticated neural network that handles more than 130 languages."
+ },
+ {
+  "start": 20.0,
+  "end": 24.0,
+  "text": "It works by turning language into something computers can understand:"
+ },
+ {
+  "start": 24.0,
+  "end": 25.0,
+  "text": "math."
+ },
+ {
+  "start": 25.0,
+  "end": 28.0,
+  "text": "Exciting times for people who like language and math."
+ },
+ {
+  "start": 28.0,
+  "end": 31.0,
+  "text": "This is the tech behind Google Translate."
+ },
+ {
+  "start": 32.0,
+  "end": 39.0,
+  "text": "There's very little code left today from the early days of of the phrase-based translation. We have shut down and deleted almost all of it."
+ },
+ {
+  "start": 39.0,
+  "end": 44.0,
+  "text": "That Google Translate from two decades ago laid the foundation for what we use today."
+ },
+ {
+  "start": 45.0,
+  "end": 49.0,
+  "text": "When it launched in 2006, it worked by playing a matching game."
+ },
+ {
+  "start": 49.0,
+  "end": 54.0,
+  "text": "First, the model looked at lots of examples of professional translations scraped from the internet."
+ },
+ {
+  "start": 54.0,
+  "end": 63.0,
+  "text": "Then, when users entered sentences for translation, the tool would break them into the longest possible chunks of words it had seen before and combine the chunks."
+ },
+ {
+  "start": 63.0,
+  "end": 72.0,
+  "text": "It now uses a much more sophisticated machine learning approach, a so-called Transformer model, which is the building block of all modern AI."
+ },
+ {
+  "start": 72.0,
+  "end": 77.0,
+  "text": "Transformers turn language into math by assigning numbers to words."
+ },
+ {
+  "start": 77.0,
+  "end": 81.0,
+  "text": "The key insight is that a series of numbers can represent a meaning."
+ },
+ {
+  "start": 81.0,
+  "end": 87.0,
+  "text": "You can then do math with those vectors that shows something about the relationships of the meanings of words to each other."
+ },
+ {
+  "start": 87.0,
+  "end": 97.0,
+  "text": "For each language Google Translate supports, every word gets converted into a vector, which is written like a list of numbers. This way, the computer can do math with them."
+ },
+ {
+  "start": 97.0,
+  "end": 102.0,
+  "text": "For instance: king minus man plus woman equals queen."
+ },
+ {
+  "start": 102.0,
+  "end": 108.0,
+  "text": "The specific numbers assigned to each word don't really matter, and they're different in different languages."
+ },
+ {
+  "start": 108.0,
+  "end": 111.0,
+  "text": "But what matters is how each word relates to every other word."
+ },
+ {
+  "start": 111.0,
+  "end": 115.0,
+  "text": "It's all based on machine learning from billions of examples."
+ },
+ {
+  "start": 115.0,
+  "end": 123.0,
+  "text": "But most of the time you want to translate something, it's not just an individual word. So the computer also has to figure out how words work together."
+ },
+ {
+  "start": 123.0,
+  "end": 127.0,
+  "text": "And this is where Transformers, a breakthrough in machine learning, come in."
+ },
+ {
+  "start": 127.0,
+  "end": 132.0,
+  "text": "The next generation of neural translation was called the Transformer architecture. And this added a level."
+ },
+ {
+  "start": 132.0,
+  "end": 137.0,
+  "text": "So it moved from representing the meaning of one word by a row of numbers"
+ },
+ {
+  "start": 137.0,
+  "end": 142.0,
+  "text": "to putting all the meanings of all the words into a table and doing math on that whole table."
+ },
+ {
+  "start": 142.0,
+  "end": 150.0,
+  "text": "And that enables you to do math that talks about not only the meaning of each word, but the importance of the relationships of the words to each other."
+ },
+ {
+  "start": 150.0,
+  "end": 154.0,
+  "text": "Say you're trying to translate this Italian sign into English."
+ },
+ {
+  "start": 154.0,
+  "end": 163.0,
+  "text": "First, Google Translate would turn each word into a vector, and those vectors would be put into one giant table, or matrix."
+ },
+ {
+  "start": 163.0,
+  "end": 168.0,
+  "text": "Then, the computer tries to figure out how each word interacts with every other word on this sign."
+ },
+ {
+  "start": 168.0,
+  "end": 171.0,
+  "text": "Mathematically, this is basically a lot of multiplication."
+ },
+ {
+  "start": 171.0,
+  "end": 180.0,
+  "text": "The most important kind of magical step is laying them out in a matrix and doing what's called matrix multiplication, and if you do enough of that, you can solve this problem."
+ },
+ {
+  "start": 180.0,
+  "end": 184.0,
+  "text": "All this creates a new list of numbers."
+ },
+ {
+  "start": 184.0,
+  "end": 187.0,
+  "text": "This is what's called a context vector, and it's something pretty special."
+ },
+ {
+  "start": 187.0,
+  "end": 195.0,
+  "text": "This list of numbers actually represents what the sentence means, not just the sum of all of its words,"
+ },
+ {
+  "start": 195.0,
+  "end": 197.0,
+  "text": "at least if the model has done its job correctly."
+ },
+ {
+  "start": 197.0,
+  "end": 208.0,
+  "text": "If you put that together and are very clever, which the people who invented Transformers were, and you train on a lot of data, which we do, you can eventually get to a collection of numbers that meaningfully represents the meaning of the sentence."
+ },
+ {
+  "start": 208.0,
+  "end": 210.0,
+  "text": "So that's called the encoder stage."
+ },
+ {
+  "start": 210.0,
+  "end": 214.0,
+  "text": "Then you have a decoder, which, roughly speaking, is the encoder in reverse."
+ },
+ {
+  "start": 214.0,
+  "end": 217.0,
+  "text": "The computer has to decode this back to human language."
+ },
+ {
+  "start": 217.0,
+  "end": 223.0,
+  "text": "The decoder now also goes through lots and lots of operations,"
+ },
+ {
+  "start": 223.0,
+  "end": 234.0,
+  "text": "and finally you start getting vectors out which can be mapped back to individual words. So we hopefully get 'Closed for', then 'holiday'."
+ },
+ {
+  "start": 234.0,
+  "end": 236.0,
+  "text": "So this is how language becomes math."
+ },
+ {
+  "start": 237.0,
+  "end": 241.0,
+  "text": "Getting this math to work requires a lot of training."
+ },
+ {
+  "start": 241.0,
+  "end": 247.0,
+  "text": "Lots of the numbers in this math problem are chosen randomly and then refined as the computer learns from billions of examples."
+ },
+ {
+  "start": 247.0,
+  "end": 257.0,
+  "text": "Before deploying an update with a set of values and weights, engineers run numerous tests with their AI evaluator and then professional human translators who check accuracy."
+ },
+ {
+  "start": 257.0,
+  "end": 264.0,
+  "text": "But since every possible combination of words leads to a unique equation, it's impossible to test everything."
+ },
+ {
+  "start": 264.0,
+  "end": 272.0,
+  "text": "Since the model has trained on translations going to or from English, it often requires more steps to go between two non-English languages."
+ },
+ {
+  "start": 273.0,
+  "end": 281.0,
+  "text": "For example, if you want to translate something in Japanese to Zulu, it will go from Japanese to English and then English to Zulu."
+ },
+ {
+  "start": 281.0,
+  "end": 287.0,
+  "text": "The first thing that happens when you use Google AI Translate is that we have to actually extract the text from the image."
+ },
+ {
+  "start": 287.0,
+  "end": 294.0,
+  "text": "And so as you can see here, it detects that now this is Chinese and it translates it to English."
+ },
+ {
+  "start": 294.0,
+  "end": 299.0,
+  "text": "It makes information a lot more accessible, because for many people, typing script in a foreign language is not an option."
+ },
+ {
+  "start": 299.0,
+  "end": 304.0,
+  "text": "The key component is a technology called Optical Character Recognition, or OCR."
+ },
+ {
+  "start": 304.0,
+  "end": 309.0,
+  "text": "Google has been using that since 2002, when it started digitizing libraries for Google Books."
+ },
+ {
+  "start": 309.0,
+  "end": 314.0,
+  "text": "Initially it would do something very simple like pattern matching. So you can think of it as, is this the same as this?"
+ },
+ {
+  "start": 314.0,
+  "end": 318.0,
+  "text": "Yes, so it's an A or B or whatnot."
+ },
+ {
+  "start": 318.0,
+  "end": 322.0,
+  "text": "But now, Optical Character Recognition also uses Transformers."
+ },
+ {
+  "start": 323.0,
+  "end": 326.0,
+  "text": "First, Google Lens identifies lines of text and text direction."
+ },
+ {
+  "start": 326.0,
+  "end": 330.0,
+  "text": "Then it determines specific characters and words."
+ },
+ {
+  "start": 330.0,
+  "end": 338.0,
+  "text": "Instead of dividing the sentence into words and assigning numbers to each word, though, it divides an image into patches of pixels. These are called tokens."
+ },
+ {
+  "start": 338.0,
+  "end": 347.0,
+  "text": "The encoder of the Transformer is going to process all of these tokens simultaneously to predict the best character and the best word eventually."
+ },
+ {
+  "start": 347.0,
+  "end": 354.0,
+  "text": "This means that Google Lens, the company's visual search tool, can often read things even when it can't make out every single letter."
+ },
+ {
+  "start": 354.0,
+  "end": 363.0,
+  "text": "With Transformers, they're able to pick up on grammar, if there is a spelling mistake, the Transformer will also be able to use the context to disambiguate and still extract the right word."
+ },
+ {
+  "start": 363.0,
+  "end": 370.0,
+  "text": "After it completes Optical Character Recognition, Google Lens analyzes the layout of all the text."
+ },
+ {
+  "start": 370.0,
+  "end": 377.0,
+  "text": "That's how a computer would know to translate this sign as 'You matter, don't give up', rather than 'You don't matter, give up'."
+ },
+ {
+  "start": 378.0,
+  "end": 390.0,
+  "text": "When you look at a newspaper, humans are excellent at just glancing at it and understanding what is the reading order, what should you read first. This is a concept that isn't actually easy to solve technically. It's very hard."
+ },
+ {
+  "start": 390.0,
+  "end": 395.0,
+  "text": "The key is for Optical Character Recognition to understand something about the meaning of what it's reading."
+ },
+ {
+  "start": 396.0,
+  "end": 398.0,
+  "text": "This is also done through extensive training."
+ },
+ {
+  "start": 399.0,
+  "end": 409.0,
+  "text": "After the chunks of text are sent to the translator, Google Lens uses painting models to erase the text off different signs or backgrounds. That way, translated text can be placed on top of clean surfaces."
+ },
+ {
+  "start": 410.0,
+  "end": 420.0,
+  "text": "Using generative models, it tries to predict and create pixels that match the surrounding pixels so that when we overlay the translated text, it looks very natural and seamless."
+ },
+ {
+  "start": 420.0,
+  "end": 422.0,
+  "text": "This doesn't always work seamlessly."
+ },
+ {
+  "start": 422.0,
+  "end": 427.0,
+  "text": "You know, this one is not picking up the first line. I'm not sure why."
+ },
+ {
+  "start": 427.0,
+  "end": 434.0,
+  "text": "Some translations don't fully account for context, which is why 'alto' on this Mexican stop sign might be mistranslated to 'high'."
+ },
+ {
+  "start": 434.0,
+  "end": 442.0,
+  "text": "And while Optical Character Recognition can frequently identify text in bad lighting or with complicated perspective, it has its limits."
+ },
+ {
+  "start": 442.0,
+  "end": 448.0,
+  "text": "One of them is with deformable objects. Whenever there's text on like a sweater or cookie wrapper,"
+ },
+ {
+  "start": 448.0,
+  "end": 454.0,
+  "text": "depending on the pose and the angle, it might be more challenging and difficult to extract the right OCR."
+ },
+ {
+  "start": 454.0,
+  "end": 460.0,
+  "text": "Well-formed, grammatically correct, fluent text, we're quite good at."
+ },
+ {
+  "start": 460.0,
+  "end": 471.0,
+  "text": "Where we have challenges is people using slang, using casual speech in chat and in social media. We don't necessarily see as much of that because we don't have access to as much data."
+ },
+ {
+  "start": 471.0,
+  "end": 476.0,
+  "text": "Google is working to add some more features, like letting users refine their translations if they want to,"
+ },
+ {
+  "start": 476.0,
+  "end": 486.0,
+  "text": "similar to how you can ask Google Gemini or ChatGPT to make translation more or less formal, or in Chilean Spanish rather than European Spanish."
+ },
+ {
+  "start": 486.0,
+  "end": 488.0,
+  "text": "And it's also working to add more languages."
+ },
+ {
+  "start": 489.0,
+  "end": 494.0,
+  "text": "There are an estimated 6,000 to 7,000 languages in the world. Our goal is to support all of them."
+ }
+]
