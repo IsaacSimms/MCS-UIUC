@@ -4,7 +4,15 @@
   "Gemini tokens": 45603
  },
  "index (transcript)": {
-  "seconds": 1.0,
+  "seconds": 0.9,
+  "Gemini tokens": null
+ },
+ "screen descriptions (Gemini)": {
+  "seconds": 73.1,
+  "Gemini tokens": 45732
+ },
+ "index (screen)": {
+  "seconds": 0.8,
   "Gemini tokens": null
  }
 }

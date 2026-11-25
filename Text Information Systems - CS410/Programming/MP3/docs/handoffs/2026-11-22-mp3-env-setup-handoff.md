@@ -1,11 +1,12 @@
-# Implementation Handoff: MP3 VideoRAG, Parts 0 and 1 Complete
+# Implementation Handoff: MP3 VideoRAG, Parts 0 and 1 Complete, Part 2 Code Done
 
 > **Handoff Mode: Implementation**
-> **Receiving agent job: Resume and continue. The environment is built and Parts 0 and 1 are done. Part 2 has not been started.**
+> **Last updated: 2026-11-25** (first written 2026-11-22; filename keeps the original date)
+> **Receiving agent job: Resume and continue. The environment is built, Parts 0 and 1 are done, and the Part 2 code has run. The Part 2 written answer is not written. Part 3 onward is untouched.**
 
 ## 1. Thread Purpose
 
-Set up MP3 (CS410 VideoRAG: transcribe a YouTube video with Gemini, index 30 s clips with Pyserini BM25, answer with Ollama `llama3.2`, route questions with LangGraph) on a new machine, then work through the notebook. The thread converted the assignment to markdown, built a self-contained, easily deletable toolchain, and carried the user through Part 0 and Part 1 of the notebook. Part 2 (screen descriptions) is next.
+Set up MP3 (CS410 VideoRAG: transcribe a YouTube video with Gemini, index 30 s clips with Pyserini BM25, answer with Ollama `llama3.2`, route questions with LangGraph) on a new machine, then work through the notebook. The thread converted the assignment to markdown, built a self-contained, easily deletable toolchain, and carried the user through Part 0 and Part 1 of the notebook. A second thread (2026-11-25, recap in `MP3/docs/recaps/2026-11-25-mp3-part2-screen-descriptions.md`) wrote and ran the Part 2 code. The Part 2 written answer is next, then Part 3.
 
 ## 2. Stack & Environment
 
@@ -50,16 +51,21 @@ Set up MP3 (CS410 VideoRAG: transcribe a YouTube video with Gemini, index 30 s c
    `retrieval found` was True for 4 of 5, so that check overstates success. The cause labels have no "generation failure" option, so Q1 and Q3 use `other`. The causes for Q1, Q3, and Q4's restatement are hypotheses; none was tested (for example re-asking Q1 with only the 1:30 clip).
 9. User wrote the Part 1 explanation in the "Your answer:" cell and saved a checkpoint (Cmd+S). Corrected text was supplied in chat. It still lacked an explicit answer to the third prompt question ("Did retrieval find the right moment even when the answer was wrong?"). Whether the user added it is unverified.
 10. Repo `.gitignore` (at `/Users/isaacsimms/Desktop/repos/MCS-UIUC/.gitignore`) got two rules: `Text Information Systems - CS410/Programming/MP3/mp3_work/index_*/` and `.ipynb_checkpoints/`.
+11. **Part 2 code done (2026-11-25).** After a `/grill-me`, the agent wrote `MP3/docs/artifacts/Part2-ScreenDescriptions.md` (paste-ready `describe_screen` and `clip_text`, annotated prompt, why-it-works breakdown). The user pasted both bodies into the notebook cell. Settled design: prompt drafted by the agent for the user to adapt; `high_res=True`; spec-only JSON handling; describe what is visible in every window (`""` only if nothing is visible); `clip_text` = `Said: ...\nShown: ...`, empty part dropped.
+12. **Part 2 ran.** One Gemini call; `mp3_work/screen_descriptions.json` has 17 of 17 clips described. `SCREEN_INDEX` was built (`mp3_work/index_screen/`). The user reported the check, index, and rerun cells ran without issue. The agent did not see their printed output.
+13. **Pasting bugs fixed along the way:** a truncated `return sho`; a mangled window sentence in the f-string prompt; a duplicated `clip_text` body (`return ... parts = []` on one line, a `SyntaxError`); and the Part 0 `MY_QUESTIONS` cell merged with the `transcribe_video` cell (`]def transcribe_video():`), which made Run All Above stop and left `os`, `DURATION`, and `CLIPS` undefined. Fixed with a newline after the `]`.
+14. **Cost row anomaly.** `mp3_work/cost.json`: `screen descriptions (Gemini)` 73.1 s and 45,732 tokens; `transcription` 46.8 s and 45,603 tokens. `high_res=True` did not raise tokens about 3x as the `gemini_video` docstring says. Cause not investigated. `Part2-ScreenDescriptions.md` section 6 still claims about 3x and is wrong.
 
 ## 4A. Current State
 
-- **Notebook:** `MP3/_646c0ca30b1c40f58aec5693f1dfef5a_mp3_videorag_final.ipynb` (62 cells). Parts 0 and 1 executed with outputs and saved. Parts 2 to 4 and the reflection are untouched. The odd filename prefix is from the course download. It was not renamed.
-- **Part 2 is next and not started.** Cells (indexes from the original notebook): 28 `describe_screen` and `clip_text` (both `YOUR CODE HERE`); 29 progress check, which calls `load_screen_descriptions()` and caches to `mp3_work/screen_descriptions.json`; 31 builds `SCREEN_INDEX = ClipIndex("screen", CLIPS, clip_text)`; 32 reruns the baseline's non-correct questions on `SCREEN_INDEX`; 33 and 34 are the Part 2 written prompt and "Your answer:" cell.
+- **Notebook:** `MP3/_646c0ca30b1c40f58aec5693f1dfef5a_mp3_videorag_final.ipynb` (62 cells). Parts 0 and 1 executed with outputs and saved. Cell 28 (`describe_screen`, `clip_text`) is implemented and was last saved at 07:42 on 2026-11-25. At that save, cells 29, 31, and 32 had no saved execution counts or outputs, so the Part 2 outputs may be unsaved. The user must press Cmd+S before the final export. Part 3 onward and the reflection are untouched. The odd filename prefix is from the course download. It was not renamed.
+- **Part 2 status:** code done, cached, and index built. Cells (indexes from the original notebook): 28 code (done); 29 progress check, caches to `mp3_work/screen_descriptions.json` (done); 31 builds `SCREEN_INDEX` (done); 32 reruns the baseline's non-correct questions on `SCREEN_INDEX` (ran; results not seen by the agent); 33 is the Part 2 prompt; **34 "Your answer:" is empty** and is the next step. It asks which of the user's questions changed with screen text, one case it helped, one it hurt if any, and the prompt with reasons.
+- **After a kernel restart:** use Run All Above Selected Cell from the cell you want to work on. It stops at the first failing cell, so look for the red output or the first `[ ]:` cell. `describe_screen` builds its prompt from `DURATION` and `CLIP_SECONDS`, so `TRANSCRIPT`, `DURATION`, and `CLIPS` must exist.
 - **Remaining TODOs after Part 2:** cell 36 `classify_question`, `time_window`, `answer_time_question`; cell 39 `summarize_clip`, `make_chapters`, `summarize_video`; cell 46 `final_results`; the Part 3 and Part 4 written answers; the reflection; PDF export and zip.
 - **Heads-up for Part 2:** none of the five Part 1 failures was about on-screen content, and none of the user's questions depends on the screen. Part 2 may change little for them. Q5 (a different retrieved passage) and Q4 (split clips) are the likeliest to move. The user knows this.
-- **Gemini calls so far:** one (transcription), cached in `mp3_transcript.json`. Part 2 will make one more call, cached in `mp3_work/screen_descriptions.json`. Each `REDO_*` flag re-reads the whole video and spends free-tier quota (8 h of video per day).
+- **Gemini calls so far:** two. Transcription is cached in `mp3_transcript.json`; screen descriptions (with `high_res=True`) are cached in `mp3_work/screen_descriptions.json`. Each `REDO_*` flag re-reads the whole video and spends free-tier quota (8 h of video per day).
 - **Ollama server:** was running during the session (answered `{"version":"0.40.17"}` when Jupyter was launched). Its state in a new session is unknown. Start it with `ollama serve` in the activated shell if `curl -s localhost:11434/api/version` fails.
-- **Git:** uncommitted. Untracked or modified: the notebook (M), `MP3/docs/artifacts/BaselineJudgements.md`, `MP3/docs/artifacts/InitialVideoQuestions.md`, `MP3/mp3_transcript.json`, `MP3/mp3_work/cost.json`. Generated Lucene indexes and `.ipynb_checkpoints/` are now ignored. Nothing has been committed. Recommend committing the transcript and `cost.json` and the docs, as agreed in chat. The user has not asked for a commit.
+- **Git (2026-11-25):** the Part 0 and Part 1 docs and the transcript were committed earlier (`a95efcb`). Uncommitted now: the notebook (M), `MP3/mp3_work/cost.json` (M), `MP3/docs/artifacts/Part2-ScreenDescriptions.md`, `MP3/mp3_work/screen_descriptions.json`, the recap `MP3/docs/recaps/2026-11-25-mp3-part2-screen-descriptions.md`, and this handoff (M). Generated Lucene indexes and `.ipynb_checkpoints/` are ignored. The user has not asked for a commit.
 - Notebook settings (cell 2): `VIDEO_URL = https://www.youtube.com/watch?v=OPTKlycwIkM`, `CLIP_SECONDS = 30`, `TOP_K = 3`, `TIME_TOLERANCE = 10`, `TEXT_MODEL = "llama3.2"`, `GEMINI_MODEL = "gemini-3.6-flash"`, `OLLAMA_URL = http://localhost:11434`.
 
 ## 5. Key Decisions & Rationale
@@ -78,13 +84,13 @@ Set up MP3 (CS410 VideoRAG: transcribe a YouTube video with Gemini, index 30 s c
 ## 6. Blockers & Open Questions
 
 - The first `uv` install attempt (`curl ... | sh`) was denied by the permission classifier. It was not retried. `uv` is not installed and not needed.
-- No blockers. Open items: whether the Part 1 written answer now covers the third prompt question; whether the notebook output contains any key text (check before the final export).
+- No blockers. Open items: whether the Part 1 written answer now covers the third prompt question; whether the notebook output contains any key text (check before the final export); the unexplained `high_res` token figure (see 3A item 14), which matters for the Part 4 Q3 answer; whether the Part 2 outputs were saved in the notebook.
 
 ## 7. Next Steps (Ordered)
 
 1. In a shell: `source ~/.cs410/venv/bin/activate`, then `ollama serve &` if `curl -s localhost:11434/api/version` fails, then `jupyter notebook` from `MP3/`.
-2. In the notebook, restore kernel state by running the cells above the work position (Run menu, "Run All Above Selected Cell", with a Part 2 cell selected). Do not use Restart & Run All, because the unfinished later cells raise `NotImplementedError`. The cached transcript loads from disk, so Gemini is not called again.
-3. Part 2 (cell 28): write `describe_screen()` and `clip_text()`, run the cell 29 check, build `SCREEN_INDEX` (cell 31), rerun the missed questions (cell 32), and write the Part 2 answer. The cell docstring specifies a per-window JSON prompt and the key mapping into `CLIPS`.
+2. In the notebook, restore kernel state by running the cells above the work position (Run menu, "Run All Above Selected Cell", with the next unfinished cell selected). Do not use Restart & Run All, because the unfinished later cells raise `NotImplementedError`. The cached transcript and `screen_descriptions.json` load from disk, so Gemini is not called again as long as `REDO_TRANSCRIPT` and `REDO_SCREEN` are `False`.
+3. Part 2: read the printed results of cell 32 (the rerun of the baseline's non-correct questions on `SCREEN_INDEX`), then have the user write the Part 2 answer in cell 34. Save with Cmd+S.
 4. Part 3 (cells 36 to 41), then Part 4, then the reflection.
 5. Submission: one `.zip` with the notebook and its PDF export. No API key anywhere in the notebook or its outputs.
 
@@ -93,6 +99,8 @@ Set up MP3 (CS410 VideoRAG: transcribe a YouTube video with Gemini, index 30 s c
 - **Grading is on effort and understanding.** Part 0 questions, verdicts, written explanations, and the reflection are the student's own work. In Parts 0 and 1 the user wrote them; the agent supplied code blocks for `transcribe_video`, corrected text for the Part 1 answer on request, and an analysis of results. Offer help, but do not write the explanations unprompted.
 - Do not edit the notebook file on disk while it is open in the user's browser. Give code blocks to paste instead; an on-disk edit would clash with the next save.
 - **User's global rules** (`~/.claude/CLAUDE.md`): concise; no affirmations ("you're right", etc.); push back when something is wrong; do not volunteer work beyond the request. A direct request to change something is the approval. Discussion or ideation is not. Prefer inline edits over rewriting files. Title comments for sizable code blocks: `# == Title == #` in Python.
+- In Part 2 the user asked the agent for the code and the prompt (as with `transcribe_video`), after a grill. The Part 2 written answer is still the user's own work; offer help, but do not write it unprompted.
+- Screenshots of the notebook can mislead on brace counts and truncated long lines. Ask for a zoomed image or a pasted line before diagnosing a syntax detail.
 - Never ask for, print, or echo the Gemini key. It is already on disk; do not recreate it. To check it, test file size and permissions or the env var's length, never the value.
 - Start Jupyter or VS Code from the activated shell, or the kernel will not see `JAVA_HOME`, Ollama on `PATH`, or the key.
 - The permission classifier blocks `curl | sh`. Do not work around it.
@@ -102,7 +110,10 @@ Set up MP3 (CS410 VideoRAG: transcribe a YouTube video with Gemini, index 30 s c
 
 | Path (under `/Users/isaacsimms/Desktop/repos/MCS-UIUC/Text Information Systems - CS410/Programming/`) | Role | State |
 |---|---|---|
-| `MP3/_646c0ca30b1c40f58aec5693f1dfef5a_mp3_videorag_final.ipynb` | The assignment notebook | Parts 0 and 1 done and saved; Part 2 onward untouched |
+| `MP3/_646c0ca30b1c40f58aec5693f1dfef5a_mp3_videorag_final.ipynb` | The assignment notebook | Parts 0 and 1 done and saved; Part 2 code done, outputs possibly unsaved, answer cell empty; Part 3 onward untouched |
+| `MP3/docs/artifacts/Part2-ScreenDescriptions.md` | Paste-ready Part 2 code, annotated prompt, breakdown | Written 2026-11-25; section 6 wrongly says `high_res` is about 3x tokens |
+| `MP3/mp3_work/screen_descriptions.json` | Cached Gemini screen descriptions (17 of 17 clips) | Final; do not regenerate unless the prompt changes |
+| `MP3/docs/recaps/2026-11-25-mp3-part2-screen-descriptions.md` | Recap of the Part 2 thread | Current |
 | `MP3/mp3_transcript.json` | Gemini transcript with times (83 pieces) | Final; cached, do not regenerate |
 | `MP3/mp3_work/` | `cost.json`, `index_transcript/` (generated, git-ignored) | Regenerated by running cells |
 | `MP3/docs/Instructions.md` | Assignment text plus grading criteria | Complete |
