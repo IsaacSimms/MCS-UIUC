@@ -18,17 +18,20 @@ Run these in a fresh terminal each time. Paste them one line at a time.
 ```sh
 source ~/.cs410/venv/bin/activate
 ```
+
 Activates the venv. It also sets up Java, Ollama and your Gemini key. You'll see `(venv)` in your prompt.
 
 ```sh
 curl -s localhost:11434/api/version || (ollama serve > /dev/null 2>&1 &)
 ```
+
 Checks whether Ollama is running. If it is, you'll see something like `{"version":"0.40.17"}`. If not, this starts it. Give it a few seconds.
 
 ```sh
 cd "/Users/isaacsimms/Desktop/repos/MCS-UIUC/Text Information Systems - CS410/Programming/MP3"
 jupyter notebook
 ```
+
 Opens Jupyter in your browser. Click the `.ipynb` file. Keep this terminal open while you work, and press Ctrl+C in it to stop Jupyter.
 
 ## Getting the notebook back to where it was
@@ -59,26 +62,26 @@ Each time you rerun the screen-description step, Gemini reads the whole video ag
 
 ## Remaining plan
 
-| Part | What you do |
-|---|---|
-| 2 | Screen descriptions merged into clip text, new index, rerun missed questions, written answer |
-| 3 | Route time and summary questions, chapters and summary, written answer |
-| 4 | Verdicts on the full system, course question cells, answer the four questions |
-| Reflection | Half a page inside the notebook |
-| Submit | PDF export of the finished notebook, then one `.zip` with the notebook and the PDF. No API key. |
+| Part       | What you do                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------- |
+| 2          | Screen descriptions merged into clip text, new index, rerun missed questions, written answer      |
+| 3          | Route time and summary questions, chapters and summary, written answer                            |
+| 4          | Verdicts on the full system, course question cells, answer the four questions                     |
+| Reflection | Half a page inside the notebook                                                                   |
+| Submit     | PDF export of the finished notebook, then one `.zip` with the notebook and the PDF. No API key. |
 
 Only export the PDF once the whole notebook has run.
 
 ## Where things live
 
-| What | Where |
-|---|---|
-| Notebook | `MP3/_646c0ca30b1c40f58aec5693f1dfef5a_mp3_videorag_final.ipynb` |
-| Your transcript | `MP3/mp3_transcript.json` |
-| Your questions and verdicts | `MP3/docs/artifacts/` |
-| Assignment text and grading | `MP3/docs/Instructions.md` |
-| The whole environment (Java, Python, Ollama, key) | `~/.cs410/` |
-| How to delete all of it later | `Programming/Remove-Environment.md` |
+| What                                              | Where                                                              |
+| ------------------------------------------------- | ------------------------------------------------------------------ |
+| Notebook                                          | `MP3/_646c0ca30b1c40f58aec5693f1dfef5a_mp3_videorag_final.ipynb` |
+| Your transcript                                   | `MP3/mp3_transcript.json`                                        |
+| Your questions and verdicts                       | `MP3/docs/artifacts/`                                            |
+| Assignment text and grading                       | `MP3/docs/Instructions.md`                                       |
+| The whole environment (Java, Python, Ollama, key) | `~/.cs410/`                                                      |
+| How to delete all of it later                     | `Programming/Remove-Environment.md`                              |
 
 ## If something breaks
 
