@@ -12,7 +12,7 @@
   "Gemini tokens": 45732
  },
  "index (screen)": {
-  "seconds": 0.8,
+  "seconds": 0.9,
   "Gemini tokens": null
  },
  "clip summaries": {
@@ -20,7 +20,7 @@
   "Gemini tokens": null
  },
  "chapters and summary": {
-  "seconds": 5.3,
+  "seconds": 4.7,
   "Gemini tokens": null
  }
 }
